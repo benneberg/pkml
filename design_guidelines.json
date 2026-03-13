@@ -1,0 +1,155 @@
+{
+  "identity": {
+    "name": "E1",
+    "mission": "Create a developer-focused, high-performance PKML platform with zero 'AI slop'.",
+    "tone": "Technical, Precise, Swiss-Minimalist, Authority",
+    "archetype": "ARCHETYPE 4: SWISS & HIGH-CONTRAST (Dark Mode Variant)"
+  },
+  "typography": {
+    "fonts": {
+      "headings": {
+        "family": "JetBrains Mono",
+        "weights": ["400", "700"],
+        "usage": "All headings (h1-h6), code blocks, prominent data values."
+      },
+      "body": {
+        "family": "Manrope",
+        "weights": ["400", "500", "600"],
+        "usage": "UI labels, documentation text, long-form content."
+      }
+    },
+    "rules": {
+      "scaling": "Use tight leading for headings (leading-none).",
+      "tracking": "Headings: tracking-tight. Overlines: tracking-widest uppercase.",
+      "hierarchy": "Contrast through weight (Regular vs Bold) rather than just size."
+    }
+  },
+  "colors": {
+    "palette": {
+      "background": {
+        "default": "#09090b",
+        "surface": "#18181b",
+        "overlay": "#27272a"
+      },
+      "foreground": {
+        "default": "#fafafa",
+        "muted": "#a1a1aa",
+        "inverse": "#09090b"
+      },
+      "primary": {
+        "default": "#6366f1",
+        "foreground": "#ffffff",
+        "hover": "#4f46e5"
+      },
+      "secondary": {
+        "default": "#27272a",
+        "foreground": "#fafafa"
+      },
+      "accent": {
+        "default": "#8b5cf6",
+        "foreground": "#ffffff"
+      },
+      "validation": {
+        "success": "#22c55e",
+        "warning": "#eab308",
+        "error": "#ef4444",
+        "info": "#3b82f6"
+      }
+    },
+    "contrast_rules": "Ensure all text meets APCA standards. Use text-zinc-400 for muted text, never lower.",
+    "theme_strategy": "Dark Mode Default. No light mode toggle needed unless requested (user asked for Developer Focus)."
+  },
+  "layout_strategies": {
+    "spacing": {
+      "scale": "Generous. Use p-6 or p-8 for cards. Gap-6 for grids.",
+      "container_padding": "px-4 md:px-8 lg:px-12",
+      "editor_layout": "Full height (h-[calc(100vh-4rem)]). Split view with resizable handles."
+    },
+    "grids": {
+      "dashboard": "Bento Grid: grid-cols-1 md:grid-cols-3 gap-6. Charts span 2 cols.",
+      "gallery": "Grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8. Aspect-video cards."
+    },
+    "surfaces": {
+      "cards": "Flat background (bg-zinc-900), 1px border (border-zinc-800). No shadow by default. Hover: border-zinc-600.",
+      "editor_pane": "bg-black border-r border-zinc-800.",
+      "modal": "Glassmorphism: bg-black/80 backdrop-blur-xl border border-zinc-800."
+    }
+  },
+  "visual_enhancers": {
+    "borders": {
+      "style": "1px solid",
+      "color": "border-zinc-800",
+      "radius": "rounded-md (sm: rounded-sm for dense UI)",
+      "active_state": "Tracing Beam effect on active editor pane."
+    },
+    "backgrounds": {
+      "app_bg": "Solid #09090b with subtle 'Grid Borders' pattern in empty states.",
+      "hero_bg": "Radial gradient overlay or subtle 'Star field' using tsparticles."
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px (thin/technical).",
+      "size": "w-4 h-4 (dense) or w-5 h-5 (standard)."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-md px-4 py-2 font-medium transition-transform active:scale-95",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-md px-4 py-2",
+      "ghost": "hover:bg-zinc-800 text-zinc-300 hover:text-white rounded-md px-3 py-2",
+      "outline": "border border-zinc-700 bg-transparent hover:bg-zinc-800 text-zinc-300"
+    },
+    "inputs": {
+      "default": "bg-zinc-950 border-zinc-800 focus:border-primary focus:ring-1 focus:ring-primary rounded-md h-10 px-3 text-sm font-mono placeholder:text-zinc-600",
+      "editor": "Monaco Editor style - minimal chrome."
+    },
+    "feedback": {
+      "toast": "Use 'sonner'. Dark background, white text, colored icons for status.",
+      "alert": "Border-l-4 border-l-primary bg-zinc-900/50 p-4"
+    }
+  },
+  "libraries": {
+    "css": "Tailwind CSS + Tailwind Animate",
+    "components": "Shadcn UI (Radix Primitives)",
+    "editor": "@monaco-editor/react (CRITICAL for PKML editing)",
+    "icons": "lucide-react",
+    "charts": "recharts (via Shadcn Charts)",
+    "motion": "framer-motion (for layout transitions)",
+    "notifications": "sonner",
+    "layout": "react-resizable-panels (for split view)"
+  },
+  "image_urls": {
+    "hero_background": "https://images.unsplash.com/photo-1709334197341-122c6fd5ae1d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMGRhcmslMjB0ZWNobm9sb2d5JTIwZGlnaXRhbCUyMG5ldHdvcmslMjBtaW5pbWFsfGVufDB8fHx8MTc3MzM4MTIyMnww&ixlib=rb-4.1.0&q=85",
+    "gallery_placeholder": "https://images.unsplash.com/photo-1675044794023-2c70962f4899?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMGRhcmslMjB0ZWNobm9sb2d5JTIwZGlnaXRhbCUyMG5ldHdvcmslMjBtaW5pbWFsfGVufDB8fHx8MTc3MzM4MTIyMnww&ixlib=rb-4.1.0&q=85",
+    "documentation_hero": "https://images.unsplash.com/photo-1744070018851-5b2f5a3d1d81?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRhcmslMjB0ZWNobm9sb2d5JTIwZGlnaXRhbCUyMG5ldHdvcmslMjBtaW5pbWFsfGVufDB8fHx8MTc3MzM4MTIyMnww&ixlib=rb-4.1.0&q=85"
+  },
+  "instructions_to_main_agent": [
+    "Install @monaco-editor/react immediately for the code editor.",
+    "Install react-resizable-panels for the split-screen layout.",
+    "Configure Tailwind for Dark Mode default (class strategy, but force dark class on html/body).",
+    "Use JetBrains Mono for all code-related UI elements (editor, logs, JSON previews).",
+    "Implement a 'Validation Status' bar at the bottom of the editor.",
+    "Create a 'Visual Builder' using a form-based approach (Shadcn Form) that updates the JSON in real-time.",
+    "Use LocalStorage to save the current draft automatically.",
+    "Ensure the 'Generate Example PKML' button creates a valid, complex JSON structure.",
+    "DO NOT use gradients for backgrounds. Use solid dark colors with subtle borders.",
+    "CRITICAL: All interactive elements must have data-testid attributes."
+  ],
+  "universal_guidelines": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur) sparingly.",
+    "You MUST NOT apply universal transition. Eg: transition: all.",
+    "You MUST NOT center align the app container.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations.",
+    "NEVER: use AI assistant Emoji characters like 🤖 etc.",
+    "Every interaction needs micro-animations - hover states, transitions.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Subtle grain textures, noise overlays, custom cursors.",
+    "Main agent relies on provided image URLs. Missing categories = placeholder text (FORBIDDEN).",
+    "Prioritize using pre-existing components from src/components/ui.",
+    "Components MUST use named exports.",
+    "Use sonner for toasts."
+  ]
+}
