@@ -915,6 +915,216 @@ if example[“id”] == example_id:
 return example
 raise HTTPException(status_code=404, detail=“Example not found”)
 
+# ─────────────────────────────────────────────────────────────────────────────
+
+# MongoDB persistence — PKML documents
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+class SavePKMLRequest(BaseModel):
+content: str
+title: Optional[str] = None
+published: bool = False
+tags: List[str] = []
+
+class PKMLDocument(BaseModel):
+id: str
+title: str
+slug: str
+content: Dict[str, Any]
+published: bool
+tags: List[str]
+stars: int
+views: int
+author: Optional[str]
+created_at: str
+updated_at: str
+
+def make_slug(name: str, doc_id: str) -> str:
+“”“Generate a URL-safe slug from product name”””
+slug = re.sub(r’[^a-z0-9]+’, ‘-’, name.lower()).strip(’-’)
+return slug or doc_id[:8]
+
+def doc_to_response(doc: dict) -> dict:
+“”“Convert MongoDB doc to API response”””
+doc[“id”] = str(doc.pop(”_id”, doc.get(“id”, “”)))
+return doc
+
+@api_router.post(”/pkml/save”)
+async def save_pkml(request: SavePKMLRequest):
+“”“Save or update a PKML document. Returns document id.”””
+try:
+content = json.loads(request.content)
+except json.JSONDecodeError as e:
+raise HTTPException(status_code=400, detail=f”Invalid JSON: {e}”)
+
+```
+now = datetime.now(timezone.utc).isoformat()
+product_name = content.get("product", {}).get("name", "Untitled")
+doc_id = str(uuid.uuid4())
+slug = make_slug(product_name, doc_id)
+
+# Ensure slug is unique
+existing = await db.pkml_documents.find_one({"slug": slug})
+if existing:
+    slug = f"{slug}-{doc_id[:6]}"
+
+document = {
+    "_id": doc_id,
+    "title": request.title or product_name,
+    "slug": slug,
+    "content": content,
+    "published": request.published,
+    "tags": request.tags,
+    "stars": 0,
+    "views": 0,
+    "author": content.get("meta", {}).get("author"),
+    "created_at": now,
+    "updated_at": now,
+}
+
+await db.pkml_documents.insert_one(document)
+return {"id": doc_id, "slug": slug, "share_url": f"/view/{slug}"}
+```
+
+@api_router.put(”/pkml/save/{doc_id}”)
+async def update_pkml(doc_id: str, request: SavePKMLRequest):
+“”“Update an existing PKML document by id.”””
+try:
+content = json.loads(request.content)
+except json.JSONDecodeError as e:
+raise HTTPException(status_code=400, detail=f”Invalid JSON: {e}”)
+
+```
+now = datetime.now(timezone.utc).isoformat()
+product_name = content.get("product", {}).get("name", "Untitled")
+
+result = await db.pkml_documents.update_one(
+    {"_id": doc_id},
+    {"$set": {
+        "title": request.title or product_name,
+        "content": content,
+        "published": request.published,
+        "tags": request.tags,
+        "updated_at": now,
+    }}
+)
+
+if result.matched_count == 0:
+    raise HTTPException(status_code=404, detail="Document not found")
+
+doc = await db.pkml_documents.find_one({"_id": doc_id})
+return {"id": doc_id, "slug": doc["slug"], "share_url": f"/view/{doc['slug']}"}
+```
+
+@api_router.get(”/pkml/document/{slug}”)
+async def get_pkml_by_slug(slug: str):
+“”“Get a PKML document by slug (for share links).”””
+doc = await db.pkml_documents.find_one({“slug”: slug})
+if not doc:
+# Also try by ID
+doc = await db.pkml_documents.find_one({”_id”: slug})
+if not doc:
+raise HTTPException(status_code=404, detail=“Document not found”)
+
+```
+# Increment view count (non-blocking)
+await db.pkml_documents.update_one({"_id": doc["_id"]}, {"$inc": {"views": 1}})
+return doc_to_response(doc)
+```
+
+@api_router.get(”/pkml/my-documents”)
+async def list_my_documents():
+“”“List all saved documents (for now all docs; auth can scope this later).”””
+cursor = db.pkml_documents.find({}).sort(“updated_at”, -1).limit(50)
+docs = await cursor.to_list(length=50)
+return [doc_to_response(d) for d in docs]
+
+@api_router.delete(”/pkml/document/{doc_id}”)
+async def delete_pkml(doc_id: str):
+“”“Delete a PKML document.”””
+result = await db.pkml_documents.delete_one({”_id”: doc_id})
+if result.deleted_count == 0:
+raise HTTPException(status_code=404, detail=“Document not found”)
+return {“deleted”: True}
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Registry — published PKMLs
+
+# ─────────────────────────────────────────────────────────────────────────────
+
+@api_router.post(”/pkml/publish/{doc_id}”)
+async def publish_pkml(doc_id: str):
+“”“Publish a PKML document to the public registry.”””
+result = await db.pkml_documents.update_one(
+{”_id”: doc_id},
+{”$set”: {“published”: True, “updated_at”: datetime.now(timezone.utc).isoformat()}}
+)
+if result.matched_count == 0:
+raise HTTPException(status_code=404, detail=“Document not found”)
+doc = await db.pkml_documents.find_one({”_id”: doc_id})
+return {“published”: True, “slug”: doc[“slug”], “registry_url”: f”/registry/{doc[‘slug’]}”}
+
+@api_router.post(”/pkml/unpublish/{doc_id}”)
+async def unpublish_pkml(doc_id: str):
+“”“Remove a PKML from the public registry.”””
+result = await db.pkml_documents.update_one(
+{”_id”: doc_id},
+{”$set”: {“published”: False, “updated_at”: datetime.now(timezone.utc).isoformat()}}
+)
+if result.matched_count == 0:
+raise HTTPException(status_code=404, detail=“Document not found”)
+return {“published”: False}
+
+@api_router.post(”/pkml/star/{doc_id}”)
+async def star_pkml(doc_id: str):
+“”“Star a registry entry.”””
+result = await db.pkml_documents.update_one(
+{”_id”: doc_id},
+{”$inc”: {“stars”: 1}}
+)
+if result.matched_count == 0:
+raise HTTPException(status_code=404, detail=“Document not found”)
+doc = await db.pkml_documents.find_one({”_id”: doc_id})
+return {“stars”: doc[“stars”]}
+
+@api_router.get(”/pkml/registry”)
+async def get_registry(
+search: Optional[str] = None,
+category: Optional[str] = None,
+sort: str = “stars”,
+limit: int = 50,
+skip: int = 0,
+):
+“”“Get all published PKMLs for the registry.”””
+query: Dict[str, Any] = {“published”: True}
+
+```
+if search:
+    query["$or"] = [
+        {"title": {"$regex": search, "$options": "i"}},
+        {"tags": {"$in": [search.lower()]}},
+        {"content.product.tagline": {"$regex": search, "$options": "i"}},
+        {"content.product.category": {"$in": [search.lower()]}},
+    ]
+
+if category and category != "all":
+    query["content.product.category"] = {"$in": [category]}
+
+sort_field = {"stars": -1, "views": -1, "updated_at": -1}.get(sort, -1)
+sort_key = sort if sort in ("stars", "views") else "updated_at"
+
+cursor = db.pkml_documents.find(query).sort(sort_key, -1).skip(skip).limit(limit)
+docs = await cursor.to_list(length=limit)
+total = await db.pkml_documents.count_documents(query)
+
+return {
+    "total": total,
+    "items": [doc_to_response(d) for d in docs]
+}
+```
+
 # Include the router in the main app
 
 app.include_router(api_router)
