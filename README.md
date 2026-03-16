@@ -1,8 +1,6 @@
-# CCC — Context Compiler
+# PKML — Product Knowledge
 
 **Generate structured, LLM-optimized project knowledge from codebases and workspaces.**
-
-CCC is a developer tool for extracting high-signal context from repositories and turning it into a reusable knowledge layer for LLMs, onboarding, architecture understanding, and cross-repository change planning.
 
 CCC generates **PKML** — a structured markdown- and JSON-based knowledge format that captures the parts of a codebase that matter most: APIs, schemas, contracts, dependencies, conventions, entry points, architecture, and cross-repo relationships.
 
