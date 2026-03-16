@@ -14,13 +14,13 @@ import uuid
 from datetime import datetime, timezone
 
 ROOT_DIR = Path(**file**).parent
-load_dotenv(ROOT_DIR / ‘.env’)
+load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 
-mongo_url = os.environ[‘MONGO_URL’]
+mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ[‘DB_NAME’]]
+db = client[os.environ['DB_NAME']]
 
 # Create the main app without a prefix
 
