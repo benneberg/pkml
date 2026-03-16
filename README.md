@@ -1,713 +1,338 @@
-# PKML — Product Knowledge
+# PKML — Product Knowledge Markup Language
 
-**Generate structured, LLM-optimized project knowledge from codebases and workspaces.**
+**A structured, machine-readable format for capturing what your product is, what it does, and how it works.**
 
-CCC generates **PKML** — a structured markdown- and JSON-based knowledge format that captures the parts of a codebase that matter most: APIs, schemas, contracts, dependencies, conventions, entry points, architecture, and cross-repo relationships.
+PKML is an open standard and web platform for creating, editing, and sharing product knowledge files. A `pkml.json` gives AI tools, documentation systems, and developers a precise, structured understanding of your product — without reading thousands of lines of source code or marketing copy.
 
----
-
-## Why CCC Exists
-
-Modern codebases are too large, too distributed, and too implicit.
-
-LLMs can help implement, refactor, and explain code — but only if they receive the **right context**. Feeding an entire repository into a model is expensive, noisy, and usually counterproductive.
-
-At the same time, the most valuable engineering knowledge is rarely documented:
-
-- which modules are important
-- what conventions a team follows
-- where dangerous code lives
-- which services depend on which
-- in what order changes must land across repositories
-- where a new feature should be implemented
-
-CCC exists to make that knowledge **extractable, structured, portable, and reusable**.
-
----
-
-## What Problem It Solves
-
-CCC is built for three real-world problems:
-
-### 1. LLM Context Compression
-Instead of copying large codebases into prompts, CCC produces targeted context files that an LLM can actually use well.
-
-### 2. Repository Understanding
-CCC gives developers and AI assistants a compressed understanding of a repository’s structure, APIs, schemas, dependencies, and conventions.
-
-### 3. Multi-Repository Discovery and Coordination
-In multi-service systems, CCC helps answer:
-- Which repos are involved in this task?
-- What needs to change in each one?
-- In what order should those changes land?
-
-This is especially important in microservice and platform-heavy organizations where cross-repo knowledge is usually tribal knowledge.
-
----
+-----
 
 ## What Is PKML?
 
-**PKML** stands for **Project Knowledge Markdown Language**.
+Most products are poorly described in a way machines can understand.
 
-PKML is the structured knowledge format that CCC generates and works with.
+README files are written for humans. Marketing pages are written for conversion. Source code describes implementation, not intent. When you give an LLM access to your codebase, it can read the code — but it doesn’t know what the product is *supposed* to do, who it’s for, or what matters most.
 
-It is not a programming language. It is a **portable project knowledge layer** built from markdown and machine-readable companion files.
+PKML solves this by giving every product a single, structured knowledge file:
 
-PKML exists to standardize how repositories describe:
+```json
+{
+  "$schema": "https://pkml.dev/schema/v0.1.json",
+  "meta": {
+    "version": "1.0.0",
+    "pkml_version": "0.1.0",
+    "last_updated": "2025-03-14T10:00:00Z",
+    "author": "Your Name"
+  },
+  "product": {
+    "name": "TaskFlow",
+    "tagline": "Project management for remote teams",
+    "description": "TaskFlow brings real-time collaboration to project management.",
+    "category": ["productivity", "collaboration"],
+    "website": "https://taskflow.dev",
+    "positioning": {
+      "problem": "Remote teams lose context working asynchronously",
+      "solution": "Real-time task visibility with live updates",
+      "target_audience": "Remote-first software teams of 5-50 people"
+    }
+  },
+  "features": [
+    {
+      "id": "feat_kanban",
+      "name": "Real-time Kanban Board",
+      "description": "Collaborative board with live cursor tracking",
+      "user_benefit": "See what teammates are working on, eliminate status meetings",
+      "priority": "primary"
+    }
+  ],
+  "tech_stack": {
+    "frontend": ["React", "TypeScript"],
+    "backend": ["Node.js", "Express"],
+    "databases": ["PostgreSQL", "Redis"]
+  }
+}
+```
 
-- architecture
-- conventions
-- boundaries
-- dependencies
-- schemas
-- routes
-- symbols
-- extension points
-- workspace-level relationships
+This file is readable by humans, usable by LLMs, version-controllable, and composable across products and teams.
 
-### Why PKML matters
+-----
 
-Most repositories have code, but not knowledge.
+## The Platform
 
-PKML gives repositories a standard way to expose that knowledge in a format that is:
+The PKML platform is a web application for creating, validating, publishing, and discovering PKML files.
 
-- readable by humans
-- usable by LLMs
-- version-controllable
-- composable across multiple repositories
-- incrementally maintainable
+### Editor
 
-### PKML is designed to be:
+A Monaco-based JSON editor with live validation against the PKML schema. As you type, the editor shows errors, warnings, and a completeness score (0–100%) indicating how much of the schema you’ve filled in.
 
-- **LLM-friendly** — optimized for prompt context and retrieval
-- **human-editable** — important judgment remains editable in markdown
-- **machine-generated where possible** — avoid manual drudgery
-- **layered** — single-repo and multi-repo knowledge can build on each other
-- **non-invasive** — does not require changing your application architecture
+The completeness score rewards:
 
-### PKML Files
+- Core product info (name, tagline, description, positioning) — up to 35 points
+- Features — 15 points
+- Workflows — 10 points
+- Brand — 10 points
+- Tech stack and integrations — 10 points
+- Schema and meta fields — 20 points
 
-A PKML-enabled repository typically contains:
+### Builder
 
-- `CLAUDE.md` — project-specific conventions and guidance
-- `ARCHITECTURE.md` — system-level understanding
-- `.llm-context/tree.txt` — file structure
-- `.llm-context/routes.txt` — API routes
-- `.llm-context/public-api.txt` — exported/public functions
-- `.llm-context/schemas-extracted.*` — types and schemas
-- `.llm-context/dependency-graph.*` — internal dependency structure
-- `.llm-context/symbol-index.json` — symbol navigation
-- `.llm-context/entry-points.json` — runtime entry points
-- `.llm-context/external-dependencies.json` — repo boundary declaration
-- `workspace-context/*` — cross-repo PKML outputs in workspace mode
+A visual form-based editor for building PKML without writing JSON directly. Collapsible sections cover every part of the schema:
 
-In other words:
+- **Meta** — version, author, license
+- **Product** — name, tagline, description, categories, website, repository, positioning (problem, solution, target audience, differentiators)
+- **Features** — id, name, description, user benefit, priority, keywords, technical details
+- **Workflows** — step-by-step user journeys with difficulty, estimated time, and expected outcomes
+- **Tech Stack** — frontend, backend, databases, infrastructure, monitoring, testing
+- **Integrations** — third-party services with categories and required flags
+- **Brand & Voice** — primary/secondary colours with live swatches, semantic colours, fonts, tone, vocabulary
 
-> **CCC is the compiler. PKML is the output format and emerging standard.**
+Changes in the Builder sync instantly to the Editor and vice versa.
 
----
+### Gallery
 
-## What Is CCC?
+A collection of starter templates covering common product types:
 
-CCC is the reference implementation and generator for PKML.
+|Template           |Category      |
+|-------------------|--------------|
+|Minimal PKML       |Starter       |
+|Task Management App|SaaS          |
+|Developer CLI Tool |Developer Tool|
+|API Service        |API           |
+|Mobile App         |Mobile        |
 
-It scans repositories, extracts code intelligence, and builds PKML files automatically.
+Each template can be previewed and loaded into the Editor with one click.
 
-CCC supports:
+### Registry
 
-- single-repository context generation
-- incremental updates
-- security-aware operation
-- workspace / multi-repository mode
-- conflict detection across services
-- optional LLM-generated module summaries
+A public registry of published PKML files at `registry.pkml.dev`. Anyone can browse, search, star, and fork published PKMLs.
 
----
+Features:
 
-## Core Concepts
+- Search by product name, tagline, category, or tag
+- Sort by stars, views, or recency
+- Fork any published PKML into your editor to customise
+- Each published PKML gets a shareable URL: `/view/:slug`
 
-### Single-Repo Mode
-CCC analyzes one repository and generates `.llm-context/`, `CLAUDE.md`, and `ARCHITECTURE.md`.
+### Import from README
 
-### Workspace Mode
-CCC reads multiple PKML-enabled repositories via a `ccc-workspace.yml` manifest and generates cross-repo context and dependency insights.
+Paste any README.md and the platform generates a draft PKML automatically. When an `ANTHROPIC_API_KEY` is configured, this uses Claude to intelligently extract product name, tagline, features, tech stack, and positioning. Without a key it falls back to a regex parser.
 
-### Boundary Declarations
-Each repository generates an `external-dependencies.json` file describing what it exposes and what it depends on externally. This is the foundation of workspace mode.
+### Export
 
-### Conflict Detection
-CCC can detect cross-repo inconsistencies such as:
+From the Editor:
 
-- enum mismatches
-- type/interface drift
-- constant drift
-- API route mismatches
-- naming inconsistencies
+- **Download** — save as `product-name.pkml.json`
+- **Export Markdown** — generate human-readable product documentation
+- **Save** — persist to MongoDB with an incremental version
+- **Publish** — make discoverable in the Registry with a shareable link
+- **Share** — copy a direct link to your published PKML
 
----
+-----
 
-## Features
+## The PKML Schema
 
-### Single-Repository Features
+A PKML document is a JSON file validated against the PKML v0.1 JSON Schema.
 
-CCC generates a `.llm-context/` directory with:
+### Required fields
 
-- 📁 **File tree** — project structure overview
-- 🔷 **Type definitions** — extracted schemas, interfaces, dataclasses
-- 🛣️ **API routes** — route map and endpoint overview
-- 📝 **Public API** — exported/public function signatures
-- 🔗 **Dependency graph** — internal import relationships
-- 🗺️ **Symbol index** — symbol navigation by class/function/type
-- 🎯 **Entry points** — main files, servers, and executables
-- 🗄️ **Database schema** — extracted model/schema information
-- 🌐 **External dependencies** — repo boundary contracts
-- 📋 **CLAUDE.md** — conventions, gotchas, dangerous areas
-- 🏗️ **ARCHITECTURE.md** — architecture scaffold
+```
+$schema    string    Must be "https://pkml.dev/schema/v0.1.json"
+meta       object    version (semver), pkml_version, last_updated (ISO8601)
+product    object    name (string), tagline (string)
+```
 
-### Multi-Repository Features
+### Optional sections
 
-Workspace mode adds:
+|Section              |Purpose                                                             |
+|---------------------|--------------------------------------------------------------------|
+|`product.description`|2-3 sentence description                                            |
+|`product.category`   |Array of category strings                                           |
+|`product.website`    |Product homepage URL                                                |
+|`product.repository` |Source repository URL                                               |
+|`product.positioning`|problem, solution, target_audience, differentiators                 |
+|`features`           |Array of features with id, name, description, user_benefit, priority|
+|`workflows`          |Step-by-step user journeys                                          |
+|`ui_patterns`        |UI components with bounding boxes (for demo generation)             |
+|`brand`              |Visual identity and voice guidelines                                |
+|`tech_stack`         |Technology layers                                                   |
+|`integrations`       |Third-party service connections                                     |
+|`evidence`           |Screenshots and video references                                    |
 
-- service discovery by tags
-- dependency ordering
-- workspace-level context generation
-- cross-repo API mapping
-- change sequencing
-- dependency graph visualization
-- conflict detection across repos
+The full JSON Schema is served at `/api/pkml/schema` and available for editor integration (VS Code, JetBrains, etc. will auto-validate any `pkml.json` file).
 
----
+-----
 
-## Security Modes
+## Relationship to CCC
 
-CCC supports three security modes:
+PKML and [CCC (Code Context Compiler)](https://github.com/benneberg/contextcompiler) are complementary tools that work well together but are fully independent.
 
-### Offline
-No external AI APIs. Safe default for proprietary repositories.
+|                     |PKML                           |CCC                        |
+|---------------------|-------------------------------|---------------------------|
+|**What it describes**|What the product *is*          |How the code *works*       |
+|**Input**            |Human-written product knowledge|Source code repositories   |
+|**Output**           |`pkml.json`                    |`.llm-context/` files      |
+|**Who uses it**      |Developers, PMs, founders      |Developers, AI coding tools|
+|**Runs as**          |Web platform                   |Python CLI                 |
 
-### Private-AI
-Use internal infrastructure such as Azure OpenAI or self-hosted models.
+**They complement each other:** CCC answers *“how is this built?”* — PKML answers *“what does this do and why?”*. An LLM that has both can understand a product completely.
 
-### Public-AI
-Use external providers such as OpenAI or Anthropic.
-
-CCC also supports:
-
-- automatic secret redaction
-- audit logging
-- exclusion of sensitive files and directories
-
----
-
-## Installation
-
-## Option 1 — Single File
-
-Download and run:
+**The workflow:**
 
 ```bash
-curl -O https://raw.githubusercontent.com/yourusername/ccc/main/llm-context-setup.py
-python3 llm-context-setup.py --doctor
+# In your repository
+ccc generate              # extract code intelligence → .llm-context/
+ccc pkml                  # bootstrap a pkml.json draft from that context
+                          # → product-knowledge/pkml.json
+
+# Then open the PKML editor to refine and publish
 ```
 
-## Option 2 — Add to a Repository
+CCC’s `ccc pkml` command reads the generated `.llm-context/` files (routes, schemas, tech stack, external dependencies) and produces a `pkml.json` draft with real data pre-filled. You then open it in the PKML editor to add the human knowledge that code can’t express: positioning, user benefits, brand voice, and product intent.
+
+-----
+
+## Architecture
+
+```
+pkml/
+├── backend/
+│   └── server.py          FastAPI — validation, persistence, registry, AI import
+├── frontend/
+│   └── src/
+│       ├── App.js          Router — Editor, Builder, Gallery, Registry, View
+│       ├── pages/
+│       │   ├── EditorPage.jsx     Monaco editor + validation panel
+│       │   ├── BuilderPage.jsx    Visual form builder
+│       │   ├── GalleryPage.jsx    Template browser
+│       │   ├── RegistryPage.jsx   Public registry with search
+│       │   └── ViewPage.jsx       Share link destination
+│       └── lib/
+│           ├── pkmlSchema.js      JSON Schema + Monaco config
+│           └── pkmlExamples.js    Gallery templates
+```
+
+**Backend stack:** FastAPI + MongoDB (Motor async driver)
+
+**Frontend stack:** React 19, Tailwind CSS, Monaco Editor, shadcn/ui, react-router-dom v7
+
+**Database:** MongoDB — documents stored in `pkml_documents` collection with slug-based addressing
+
+### API Endpoints
+
+|Method|Endpoint                   |Purpose                                 |
+|------|---------------------------|----------------------------------------|
+|GET   |`/api/`                    |Health check                            |
+|GET   |`/api/pkml/schema`         |PKML JSON Schema v0.1                   |
+|POST  |`/api/pkml/validate`       |Validate + completeness score           |
+|POST  |`/api/pkml/parse-readme`   |README → PKML (AI-powered)              |
+|POST  |`/api/pkml/export-markdown`|PKML → Markdown docs                    |
+|GET   |`/api/pkml/examples`       |Gallery templates                       |
+|POST  |`/api/pkml/save`           |Save new document                       |
+|PUT   |`/api/pkml/save/:id`       |Update existing document                |
+|GET   |`/api/pkml/document/:slug` |Fetch by slug (share links)             |
+|GET   |`/api/pkml/my-documents`   |List saved documents                    |
+|DELETE|`/api/pkml/document/:id`   |Delete document                         |
+|POST  |`/api/pkml/publish/:id`    |Publish to registry                     |
+|POST  |`/api/pkml/unpublish/:id`  |Remove from registry                    |
+|POST  |`/api/pkml/star/:id`       |Star a registry entry                   |
+|GET   |`/api/pkml/registry`       |Search registry (search, category, sort)|
+
+-----
+
+## Running Locally
+
+### Backend
 
 ```bash
-wget -O llm-context-setup.py https://raw.githubusercontent.com/yourusername/ccc/main/llm-context-setup.py
-python3 llm-context-setup.py
+cd backend
+pip install -r requirements.txt
+uvicorn server:app --reload
 ```
 
-## Option 3 — Package / Installed CLI (in progress)
+Requires a running MongoDB instance. Set `MONGO_URL` in `backend/.env`.
 
-The repository is being modularized into the `ccc/` package so it can support an installable CLI in addition to the single-file entrypoint.
+Optional: set `ANTHROPIC_API_KEY` in `backend/.env` to enable AI-powered README import.
 
-Planned command:
+### Frontend
 
 ```bash
-pip install ccc
-ccc generate
-ccc workspace query --tags core
+cd frontend
+yarn install
+yarn start
 ```
 
----
+Set `REACT_APP_BACKEND_URL` in `frontend/.env`.
 
-## Requirements
-
-### Required
-- Python 3.10+
-
-### Optional
-```bash
-pip install pyyaml       # YAML config and workspace manifests
-pip install watchdog     # watch mode
-pip install anthropic    # LLM summaries
-pip install openai       # LLM summaries
-```
-
----
-
-## Quick Start
-
-### 1. Diagnose the environment
-
-```bash
-python3 llm-context-setup.py --doctor
-```
-
-### 2. Generate repository context
-
-```bash
-python3 llm-context-setup.py
-```
-
-### 3. Incrementally update after changes
-
-```bash
-python3 llm-context-setup.py --quick-update
-```
-
-### 4. Watch for file changes
-
-```bash
-python3 llm-context-setup.py --watch
-```
-
----
-
-## Single-Repository Usage
-
-### Generate PKML context for a repository
-
-```bash
-python3 llm-context-setup.py
-```
-
-### Force regeneration
-
-```bash
-python3 llm-context-setup.py --force
-```
-
-### Show security configuration
-
-```bash
-python3 llm-context-setup.py --security-status
-```
-
-### Generate with module summaries
-
-```bash
-python3 llm-context-setup.py --with-summaries
-```
-
----
-
-## Output Example
-
-A typical repository will end up with:
-
-```text
-your-project/
-├── .llm-context/
-│   ├── tree.txt
-│   ├── schemas-extracted.py
-│   ├── types-extracted.ts
-│   ├── routes.txt
-│   ├── public-api.txt
-│   ├── dependency-graph.txt
-│   ├── dependency-graph.md
-│   ├── symbol-index.json
-│   ├── entry-points.json
-│   ├── db-schema.txt
-│   ├── api-contract.md
-│   ├── env-shape.txt
-│   ├── recent-commits.txt
-│   ├── external-dependencies.json
-│   ├── manifest.json
-│   └── audit.log
-├── CLAUDE.md
-├── ARCHITECTURE.md
-└── llm-context.yml
-```
-
----
-
-## Multi-Repository Mode
-
-CCC supports multi-repository workspaces via a workspace manifest.
-
-### Workspace Manifest
-
-Create `ccc-workspace.yml`:
-
-```yaml
-name: streaming-platform
-version: 1
-
-services:
-  client:
-    path: ./client
-    type: frontend
-    tags: [platforms, ui, player]
-
-  pairing-service:
-    path: ./pairing-service
-    type: backend-api
-    tags: [platforms, devices, pairing]
-    depends_on: [cms-db, auth-service]
-
-  cms-db:
-    path: ./cms-db
-    type: data
-    tags: [platforms, content, schema]
-
-  auth-service:
-    path: ./auth-service
-    type: backend-api
-    tags: [auth, security]
-```
-
-### Workspace Commands
-
-List services:
-
-```bash
-python3 llm-context-setup.py workspace list
-```
-
-Query by tags:
-
-```bash
-python3 llm-context-setup.py workspace query --tags platforms
-```
-
-Inspect a specific service:
-
-```bash
-python3 llm-context-setup.py workspace query --service pairing-service --what all
-```
-
-Validate the workspace:
-
-```bash
-python3 llm-context-setup.py workspace validate
-```
-
-Generate workspace context:
-
-```bash
-python3 llm-context-setup.py workspace generate
-```
-
----
-
-## Conflict Detection
-
-Workspace mode can detect cross-repo inconsistencies.
-
-### Detect conflicts
-
-```bash
-python3 llm-context-setup.py workspace conflicts
-```
-
-### Alias
-
-```bash
-python3 llm-context-setup.py workspace doctor
-```
-
-### Example detected conflicts
-
-- enum mismatch across services
-- type/interface field drift
-- constant value mismatch
-- route mismatch between provider and consumer
-- inconsistent naming conventions
-
-### Generated report
-
-```text
-workspace-context/
-└── conflicts-report.md
-```
-
----
-
-## Workspace Context Output
-
-Workspace mode generates:
-
-```text
-workspace-context/
-├── WORKSPACE.md
-├── cross-repo-api.txt
-├── change-sequence.md
-├── dependency-graph.md
-└── conflicts-report.md
-```
-
-### WORKSPACE.md
-High-level description of services and how they connect.
-
-### cross-repo-api.txt
-Cross-service API call mapping.
-
-### change-sequence.md
-Recommended order of changes derived from dependency relationships.
-
-### dependency-graph.md
-Mermaid graph of service relationships.
-
-### conflicts-report.md
-Detected inconsistencies across repos.
-
----
-
-## Why `external-dependencies.json` Matters
-
-Every repository can generate:
-
-```text
-.llm-context/external-dependencies.json
-```
-
-This file is the boundary declaration for a service.
-
-It tells CCC:
-
-- what this repo exposes
-- what APIs it consumes
-- which services it depends on
-- which databases and queues it uses
-- which tags it belongs to
-
-This file is the **bridge** between single-repo PKML and workspace PKML.
-
----
-
-## TypeScript Support
-
-TypeScript is a first-class target and currently the most heavily optimized language in CCC.
-
-CCC detects:
-
-- exported interfaces and types
-- enums and constants
-- Express routes
-- Next.js route handlers and server actions
-- NestJS controllers and event patterns
-- tRPC procedures and routers
-- GraphQL client usage
-- Prisma, TypeORM, Drizzle, Mongoose patterns
-- fetch / axios / got / ky requests
-- queues and event systems
-- WebSocket usage
-- third-party SDK integration patterns
-
-Because many modern multi-repo systems are TypeScript-heavy, workspace mode is especially effective there.
-
----
-
-## Development Status
-
-CCC is currently in an active modularization phase.
-
-### What already exists
-- single-file working generator
-- incremental updates
-- external dependency detection
-- workspace query mode
-- workspace context generation
-- cross-repo conflict detection
-- tests and fixtures
-- package skeleton (`ccc/`) in progress
-
-### What is currently being built
-- modular package architecture
-- migration from giant single file to importable package
-- cleaner CLI separation
-- extractors/generators split into modules
-
-### Planned
-- installable CLI package
-- richer language extractor plugin model
-- improved workspace aggregation
-- better conflict intelligence
-- optional semantic retrieval
-- stronger CI packaging and release process
-
----
-
-## Project Structure
-
-Current / target structure:
-
-```text
-contextcompiler/
-├── llm-context-setup.py
-├── ccc/
-│   ├── cli.py
-│   ├── config.py
-│   ├── models.py
-│   ├── manifest.py
-│   ├── security/
-│   ├── utils/
-│   ├── extractors/
-│   ├── generators/
-│   └── workspace/
-├── tests/
-├── docs/
-└── README.md
-```
-
----
-
-## Example Workflow
-
-### Single repository
-
-```bash
-python3 llm-context-setup.py --doctor
-python3 llm-context-setup.py
-python3 llm-context-setup.py --quick-update
-```
-
-### Multi-repository
-
-```bash
-python3 llm-context-setup.py workspace validate
-python3 llm-context-setup.py workspace query --tags platforms
-python3 llm-context-setup.py workspace generate
-python3 llm-context-setup.py workspace conflicts
-```
-
----
+-----
 
 ## Configuration
 
-Create `llm-context.yml`:
+`backend/.env`:
 
-```yaml
-output_dir: .llm-context
-
-security:
-  mode: offline
-  redact_secrets: true
-  audit_log: true
-
-generate:
-  tree: true
-  schemas: true
-  routes: true
-  public_api: true
-  dependencies: true
-  dependency_graph_mermaid: true
-  symbol_index: true
-  entry_points: true
-  db_schema: true
-  api_contract: true
-  external_dependencies: true
-  recent_activity: true
-  claude_md_scaffold: true
-  architecture_md_scaffold: true
-  module_summaries: false
-
-llm_summaries:
-  provider: anthropic
-  model: claude-sonnet-4-20250514
-  max_modules: 30
+```env
+MONGO_URL=mongodb://localhost:27017
+DB_NAME=pkml
+CORS_ORIGINS=*
+ANTHROPIC_API_KEY=          # optional — enables AI README import
 ```
 
----
+`frontend/.env`:
 
-## Testing
-
-Install test dependencies:
-
-```bash
-pip install -r tests/requirements.txt
+```env
+REACT_APP_BACKEND_URL=http://localhost:8000
 ```
 
-Run tests:
-
-```bash
-python tests/run_tests.py --verbose
-```
-
-Integration fixtures currently include:
-- Python FastAPI example
-- TypeScript Express example
-- Multi-repo workspace example
-
----
+-----
 
 ## Roadmap
 
-### Near-term
-- complete modularization into `ccc/`
-- move workspace mode fully into package
-- move doctor/watch/generator into package
-- split extractors and generators by concern
+### Now — what’s built
 
-### Mid-term
-- installable CLI
-- stronger TypeScript/NestJS/Next.js support
-- richer workspace aggregation
-- more complete cross-repo sequencing
+- PKML Editor with live validation and completeness scoring
+- Visual Builder covering the full schema
+- Gallery with 5 starter templates
+- Registry with MongoDB persistence, search, stars, forks
+- Share links (`/view/:slug`)
+- Save / Publish / Share workflow
+- README import (AI-powered with Anthropic, regex fallback)
+- Export to Markdown
 
-### Long-term
-- PKML as a documented standard
-- multiple PKML producers and consumers
-- semantic retrieval and local indexing
-- editor/IDE integration
-- enterprise/private-ai deployment workflows
+### Next
 
----
+- **My Documents page** — manage your saved PKMLs, see history
+- **File upload for README import** — drag and drop instead of paste-only
+- **Seeded registry** — starter examples visible before anyone publishes
+- **CCC import button** — load a `pkml.json` generated by `ccc pkml` directly
+- **GitHub Badge** — embeddable badge linking to your registry entry
+
+### Later
+
+- **Interactive Demo Generator** — turn workflows into embeddable step-through demos
+- **GitHub Action** — auto-update PKML on push
+- **Collaborative editing** — team ownership of a PKML document
+- **PKML versioning** — track changes over time with diff view
+
+-----
 
 ## Contributing
 
-Contributions are welcome.
+Contributions are welcome. Especially valuable:
 
-Especially valuable areas:
-- language extractors
-- TypeScript framework support
-- conflict detection improvements
-- PKML documentation
-- real-world output examples
-- tests for edge cases
-- packaging and release automation
+- Additional gallery templates (different product types and industries)
+- Improvements to the completeness scoring logic
+- Language translations for the UI
+- Real-world PKML examples for the registry
+- Schema extensions and proposals
 
----
-
-## Positioning
-
-CCC is not just a repo summarizer.
-
-It is better understood as:
-
-> **a compiler for repository knowledge**
-
-And PKML is the output format that makes that knowledge reusable.
-
-That is the long-term direction:
-- repositories become self-describing
-- workspaces become navigable
-- LLM context becomes structured instead of improvised
-- tribal knowledge becomes version-controlled knowledge
-
----
+-----
 
 ## License
 
-MIT
+MIT — see LICENSE.
 
----
+-----
 
 ## Status
 
-Early but serious.
+**Functional and actively developed.**
 
-CCC is already useful today in single-repo and workspace mode, and is being actively evolved toward a stable modular architecture and a more explicit PKML standard.
-
-If you are exploring LLM-assisted development, multi-repo architecture navigation, or structured developer knowledge, this is exactly the problem space CCC is built for.
+The editor, builder, gallery, registry, persistence, and share links all work. The platform is usable today for creating and publishing structured product knowledge.
