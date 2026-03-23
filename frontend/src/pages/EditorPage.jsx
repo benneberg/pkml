@@ -52,6 +52,7 @@ const circumference = 2 * Math.PI * 36;
 const offset = circumference - ((completeness_score || 0) / 100) * circumference;
 
 return (
+
 <div className="h-full flex flex-col bg-zinc-950" data-testid="validation-panel">
 {/* Header */}
 <div className="p-4 border-b border-zinc-800">
@@ -226,6 +227,7 @@ try {
 };
 
 return (
+
 <Dialog open={open} onOpenChange={setOpen}>
 <DialogTrigger asChild>
 <Button variant="outline" size="sm" className="gap-2" data-testid="import-readme-btn">
@@ -249,11 +251,13 @@ placeholder=”# My Product
 A brief description of your product…
 
 ## Features
+
 - Feature 1
 - Feature 2”
-className=“h-64 font-mono text-sm bg-zinc-950 border-zinc-800 text-white placeholder:text-zinc-600”
-data-testid=“readme-textarea”
-/>
+  className=“h-64 font-mono text-sm bg-zinc-950 border-zinc-800 text-white placeholder:text-zinc-600”
+  data-testid=“readme-textarea”
+  />
+
 <div className="flex justify-end gap-2">
 <Button variant=“outline” onClick={() => setOpen(false)} data-testid=“cancel-import-btn”>
 Cancel
@@ -292,6 +296,7 @@ setOpen(false);
 };
 
 return (
+
 <Dialog open={open} onOpenChange={setOpen}>
 <DialogTrigger asChild>
 <Button variant="outline" size="sm" className="gap-2" data-testid="generate-example-btn">
@@ -327,8 +332,67 @@ data-testid={`example-${example.id}`}
 );
 };
 
+// Import File Dialog — accepts any pkml.json (drag-drop or click-to-browse)
+const ImportFileDialog = ({ onImport }) => {
+const [open, setOpen] = useState(false);
+const [dragging, setDragging] = useState(false);
+const fileRef = useRef(null);
+
+const handleFile = (file) => {
+if (!file) return;
+if (!file.name.endsWith(”.json”)) { toast.error(“Please upload a .json file”); return; }
+const reader = new FileReader();
+reader.onload = (e) => {
+try {
+const parsed = JSON.parse(e.target.result);
+onImport(JSON.stringify(parsed, null, 2));
+toast.success(“Imported successfully!”);
+setOpen(false);
+} catch { toast.error(“Invalid JSON — could not parse file”); }
+};
+reader.readAsText(file);
+};
+
+return (
+<Dialog open={open} onOpenChange={setOpen}>
+<DialogTrigger asChild>
+<Button variant="outline" size="sm" className="gap-2" data-testid="import-file-btn">
+<FolderOpen className="w-4 h-4" />
+<span className="hidden sm:inline">Import File</span>
+</Button>
+</DialogTrigger>
+<DialogContent className="max-w-md bg-zinc-900 border-zinc-800">
+<DialogHeader>
+<DialogTitle className="text-white">Import pkml.json</DialogTitle>
+<DialogDescription className="text-zinc-400">
+Upload an existing <code className="text-zinc-300 bg-zinc-800 px-1 rounded">pkml.json</code> file to load it into the editor.
+</DialogDescription>
+</DialogHeader>
+<div
+onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+onDragLeave={() => setDragging(false)}
+onDrop={(e) => { e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files[0]); }}
+onClick={() => fileRef.current?.click()}
+className={`mt-2 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${dragging ? "border-indigo-500 bg-indigo-500/10" : "border-zinc-700 hover:border-zinc-600 hover:bg-zinc-800/30"}`}
+>
+<FolderOpen className="w-8 h-8 text-zinc-500 mx-auto mb-3" />
+<p className="text-sm text-zinc-300 font-medium">Drop a pkml.json file here</p>
+<p className="text-xs text-zinc-600 mt-1">or click to browse</p>
+<input ref={fileRef} type=“file” accept=”.json,application/json” className=“hidden”
+onChange={(e) => handleFile(e.target.files[0])} />
+</div>
+<p className="text-xs text-zinc-600 mt-2">
+{“Don’t have one? “}
+<a href="https://github.com/benneberg/contextcompiler" target="_blank" rel="noopener noreferrer"
+className="text-indigo-400 hover:underline">Generate from your codebase with CCC →</a>
+</p>
+</DialogContent>
+</Dialog>
+);
+};
+
 // Main Editor Page
-export const EditorPage = ({ content, onContentChange }) => {
+export const EditorPage = ({ content, onContentChange, activeDocId, activeDocSlug, onDocSaved }) => {
 const navigate = useNavigate();
 const [validation, setValidation] = useState(null);
 const [isValidating, setIsValidating] = useState(false);
@@ -346,7 +410,7 @@ setIsSaving(true);
 try {
 const method = savedDocId ? “PUT” : “POST”;
 const url = savedDocId
-? `${BACKEND_URL}/api/pkml/save/${savedDocId}`
+? `${BACKEND_URL}/api/pkml/save/${docId}`
 : `${BACKEND_URL}/api/pkml/save`;
 const res = await fetch(url, {
 method,
@@ -551,6 +615,7 @@ toast.success(“New PKML created!”);
 };
 
 return (
+
 <div className="h-[calc(100vh-4rem)] flex flex-col" data-testid="editor-page">
 {/* Toolbar */}
 <div className="toolbar flex-wrap gap-2">
@@ -560,6 +625,7 @@ return (
 <span className="hidden sm:inline">New</span>
 </Button>
 <ImportReadmeDialog onImport={onContentChange} />
+<ImportFileDialog onImport={onContentChange} />
 <GenerateExampleDialog onGenerate={onContentChange} />
 </div>
 
@@ -585,7 +651,7 @@ return (
         {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
         <span className="hidden sm:inline">Save</span>
       </Button>
-      {savedSlug && (
+      {docSlug && (
         <Button size="sm" variant="outline" onClick={handleCopyShareLink} className="gap-2" data-testid="share-btn">
           <Link className="w-4 h-4" />
           <span className="hidden sm:inline">Share</span>
