@@ -484,7 +484,10 @@ const completenessHints = [];
 if (!pkml.product?.positioning?.problem) completenessHints.push(“Add problem statement”);
 if (!pkml.features?.length) completenessHints.push(“Add at least one feature”);
 if (!pkml.workflows?.length) completenessHints.push(“Add a workflow”);
-if (!pkml.tech_stack?.frontend?.length && !pkml.tech_stack?.backend?.length) completenessHints.push(“Add tech stack”);
+const hasTechStack = Array.isArray(pkml.tech_stack)
+? pkml.tech_stack.length > 0
+: (pkml.tech_stack?.frontend?.length || pkml.tech_stack?.backend?.length);
+if (!hasTechStack) completenessHints.push(“Add tech stack”);
 
 return (
 <div className="h-[calc(100vh-4rem)] flex flex-col" data-testid="builder-page">
