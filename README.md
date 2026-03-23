@@ -1,273 +1,192 @@
 # PKML — Product Knowledge Markup Language
 
-**A structured, machine-readable format for capturing what your product is, what it does, and how it works.**
+**A structured, machine-readable format for capturing what your product is, what it does, and how it's built.**
 
-PKML is an open standard and web platform for creating, editing, and sharing product knowledge files. A `pkml.json` gives AI tools, documentation systems, and developers a precise, structured understanding of your product — without reading thousands of lines of source code or marketing copy.
+PKML v0.2 is an open standard and web platform for creating, editing, and sharing product knowledge files. A `pkml.json` gives AI tools, documentation systems, and developers a precise, structured understanding of your product — and your engineering team's accumulated knowledge.
 
------
+---
 
 ## What Is PKML?
 
-Most products are poorly described in a way machines can understand.
+Most products are poorly described in a way machines can understand. README files are written for humans. Source code describes implementation, not intent. When you give an LLM access to your codebase, it knows *how* the code works — but not *what* the product is supposed to do, or *why* certain decisions were made.
 
-README files are written for humans. Marketing pages are written for conversion. Source code describes implementation, not intent. When you give an LLM access to your codebase, it can read the code — but it doesn’t know what the product is *supposed* to do, who it’s for, or what matters most.
+PKML solves this with a single structured file split into two clear halves:
 
-PKML solves this by giving every product a single, structured knowledge file:
+```
+product section   — What the product IS
+                    name, tagline, positioning, features, workflows, brand
 
-```json
-{
-  "$schema": "https://pkml.dev/schema/v0.1.json",
-  "meta": {
-    "version": "1.0.0",
-    "pkml_version": "0.1.0",
-    "last_updated": "2025-03-14T10:00:00Z",
-    "author": "Your Name"
-  },
-  "product": {
-    "name": "TaskFlow",
-    "tagline": "Project management for remote teams",
-    "description": "TaskFlow brings real-time collaboration to project management.",
-    "category": ["productivity", "collaboration"],
-    "website": "https://taskflow.dev",
-    "positioning": {
-      "problem": "Remote teams lose context working asynchronously",
-      "solution": "Real-time task visibility with live updates",
-      "target_audience": "Remote-first software teams of 5-50 people"
-    }
-  },
-  "features": [
-    {
-      "id": "feat_kanban",
-      "name": "Real-time Kanban Board",
-      "description": "Collaborative board with live cursor tracking",
-      "user_benefit": "See what teammates are working on, eliminate status meetings",
-      "priority": "primary"
-    }
-  ],
-  "tech_stack": {
-    "frontend": ["React", "TypeScript"],
-    "backend": ["Node.js", "Express"],
-    "databases": ["PostgreSQL", "Redis"]
-  }
-}
+engineering section — How to BUILD it
+                      constraints, lessons learned, architecture, patterns, decisions
 ```
 
-This file is readable by humans, usable by LLMs, version-controllable, and composable across products and teams.
+This is the missing layer between "here's the code" and "here's what we're building and why."
 
------
+---
 
 ## The Platform
 
-The PKML platform is a web application for creating, validating, publishing, and discovering PKML files.
+A web application for creating, validating, publishing, and discovering PKML files.
 
 ### Editor
-
-A Monaco-based JSON editor with live validation against the PKML schema. As you type, the editor shows errors, warnings, and a completeness score (0–100%) indicating how much of the schema you’ve filled in.
-
-The completeness score rewards:
-
-- Core product info (name, tagline, description, positioning) — up to 35 points
-- Features — 15 points
-- Workflows — 10 points
-- Brand — 10 points
-- Tech stack and integrations — 10 points
-- Schema and meta fields — 20 points
+Monaco-based JSON editor with live v0.2 schema validation. Shows errors, warnings, and a completeness score (0–100%) as you type.
 
 ### Builder
-
-A visual form-based editor for building PKML without writing JSON directly. Collapsible sections cover every part of the schema:
-
-- **Meta** — version, author, license
-- **Product** — name, tagline, description, categories, website, repository, positioning (problem, solution, target audience, differentiators)
-- **Features** — id, name, description, user benefit, priority, keywords, technical details
-- **Workflows** — step-by-step user journeys with difficulty, estimated time, and expected outcomes
-- **Tech Stack** — frontend, backend, databases, infrastructure, monitoring, testing
-- **Integrations** — third-party services with categories and required flags
-- **Brand & Voice** — primary/secondary colours with live swatches, semantic colours, fonts, tone, vocabulary
-
-Changes in the Builder sync instantly to the Editor and vice versa.
+Visual form-based editor covering the full schema with no JSON required:
+- **Meta** — version, authors
+- **Product** — name, tagline, description, positioning (problem/solution/audience/differentiators)
+- **Features** — with priority (p0–p3), status (planned/wip/live/deprecated), introduced date
+- **Workflows** — step-by-step user journeys with actor and system response
+- **Tech Stack** — frontend, backend, databases, infrastructure
+- **Integrations** — third-party services
+- **Brand & Voice** — colours, typography, tone, vocabulary
+- **Architecture** — repository map with roles, owners, languages
+- **Constraints** — rules that must not be violated, with severity and reason
+- **Lessons Learned** — historical failures with "never forget" flag for critical ones
 
 ### Gallery
+Five starter templates: Minimal, Task Management SaaS, InvoiceFlow (full v0.2 with engineering section), Developer CLI Tool, API Service.
 
-A collection of starter templates covering common product types:
-
-|Template           |Category      |
-|-------------------|--------------|
-|Minimal PKML       |Starter       |
-|Task Management App|SaaS          |
-|Developer CLI Tool |Developer Tool|
-|API Service        |API           |
-|Mobile App         |Mobile        |
-
-Each template can be previewed and loaded into the Editor with one click.
+### My Documents
+Your saved PKMLs — edit, publish/unpublish, delete, copy share links.
 
 ### Registry
+Public registry of published PKMLs. Search by name/tagline/category, sort by stars/views/recency, fork any entry.
 
-A public registry of published PKML files at `registry.pkml.dev`. Anyone can browse, search, star, and fork published PKMLs.
+### Import
+- **Import README** — paste any README.md and generate a PKML draft (AI-powered with Anthropic, regex fallback)
+- **Import File** — upload an existing `pkml.json` directly. Don't have one? [Generate it from your codebase with CCC →](https://github.com/benneberg/contextcompiler)
 
-Features:
+---
 
-- Search by product name, tagline, category, or tag
-- Sort by stars, views, or recency
-- Fork any published PKML into your editor to customise
-- Each published PKML gets a shareable URL: `/view/:slug`
-
-### Import from README
-
-Paste any README.md and the platform generates a draft PKML automatically. When an `ANTHROPIC_API_KEY` is configured, this uses Claude to intelligently extract product name, tagline, features, tech stack, and positioning. Without a key it falls back to a regex parser.
-
-### Export
-
-From the Editor:
-
-- **Download** — save as `product-name.pkml.json`
-- **Export Markdown** — generate human-readable product documentation
-- **Save** — persist to MongoDB with an incremental version
-- **Publish** — make discoverable in the Registry with a shareable link
-- **Share** — copy a direct link to your published PKML
-
------
-
-## The PKML Schema
-
-A PKML document is a JSON file validated against the PKML v0.1 JSON Schema.
-
-### Required fields
+## PKML v0.2 Schema
 
 ```
-$schema    string    Must be "https://pkml.dev/schema/v0.1.json"
-meta       object    version (semver), pkml_version, last_updated (ISO8601)
-product    object    name (string), tagline (string)
+Required:   $schema, meta (version, pkml_version="0.2", last_updated), product (name, tagline)
+
+Product:    description, category[], website, repository, positioning{problem, solution, target_audience, differentiators[]}
+Features:   id, name, description, user_benefit, priority (p0–p3), status, introduced, related{patterns,constraints,technical_debt}
+Workflows:  id, name, steps[{order, action, actor, system_response}], happy_path, error_paths
+Brand:      colors, typography, voice, tone
+Tech stack: array of {layer, technology, version, purpose}
+            or legacy object {frontend[], backend[], databases[], ...}
+
+Engineering:
+  architecture:             repositories[{id,name,role,language,framework,ownership}], dependencies[]
+  constraints:              id, rule, reason, severity (critical/high/medium/low), context, approved_alternatives, validation
+  implementation_patterns:  id, name, when_to_use, steps[], examples[{outcome: success|failure|partial}], history[]
+  technical_debt:           id, issue, location, priority, refactor_when, estimated_effort
+  lessons_learned:          id, what_happened, correct_approach, never_forget, related_pattern, related_constraint
+  decision_log:             id, decision, context, alternatives_considered, why_this_choice, owner
+  glossary:                 term, definition, threshold, implementation_note
+  coordination:             trigger, notify[{team, contact, lead_time, reason}]
+
+validation_rules:  self-validation checks with severity and message templates
 ```
 
-### Optional sections
+Full JSON Schema served at `/api/pkml/schema`.
 
-|Section              |Purpose                                                             |
-|---------------------|--------------------------------------------------------------------|
-|`product.description`|2-3 sentence description                                            |
-|`product.category`   |Array of category strings                                           |
-|`product.website`    |Product homepage URL                                                |
-|`product.repository` |Source repository URL                                               |
-|`product.positioning`|problem, solution, target_audience, differentiators                 |
-|`features`           |Array of features with id, name, description, user_benefit, priority|
-|`workflows`          |Step-by-step user journeys                                          |
-|`ui_patterns`        |UI components with bounding boxes (for demo generation)             |
-|`brand`              |Visual identity and voice guidelines                                |
-|`tech_stack`         |Technology layers                                                   |
-|`integrations`       |Third-party service connections                                     |
-|`evidence`           |Screenshots and video references                                    |
+---
 
-The full JSON Schema is served at `/api/pkml/schema` and available for editor integration (VS Code, JetBrains, etc. will auto-validate any `pkml.json` file).
+## Completeness Score
 
------
+| Section | Points |
+|---------|--------|
+| $schema present | 5 |
+| meta complete | 5 |
+| product core | 10 |
+| product description | 5 |
+| product category | 3 |
+| positioning (problem/solution/audience) | 12 |
+| features | 12 |
+| workflows | 8 |
+| brand | 5 |
+| tech stack | 5 |
+| integrations | 5 |
+| engineering.architecture | 8 |
+| engineering.constraints | 8 |
+| engineering.lessons_learned | 5 |
+| engineering.patterns | 5 |
+| **Total** | **100** |
+
+---
 
 ## Relationship to CCC
 
-PKML and [CCC (Code Context Compiler)](https://github.com/benneberg/contextcompiler) are complementary tools that work well together but are fully independent.
+PKML and [CCC (Code Context Compiler)](https://github.com/benneberg/contextcompiler) are complementary tools.
 
-|                     |PKML                           |CCC                        |
-|---------------------|-------------------------------|---------------------------|
-|**What it describes**|What the product *is*          |How the code *works*       |
-|**Input**            |Human-written product knowledge|Source code repositories   |
-|**Output**           |`pkml.json`                    |`.llm-context/` files      |
-|**Who uses it**      |Developers, PMs, founders      |Developers, AI coding tools|
-|**Runs as**          |Web platform                   |Python CLI                 |
+| | PKML | CCC |
+|---|---|---|
+| **Describes** | What the product *is* | How the code *works* |
+| **Input** | Human-written knowledge | Source code |
+| **Output** | `pkml.json` | `.llm-context/` files |
+| **Runs as** | Web platform | Python CLI |
 
-**They complement each other:** CCC answers *“how is this built?”* — PKML answers *“what does this do and why?”*. An LLM that has both can understand a product completely.
+**Together:** CCC answers *"how is this built?"* — PKML answers *"what does this do and why?"*. An LLM with both can understand a product completely.
 
 **The workflow:**
-
 ```bash
-# In your repository
-ccc generate              # extract code intelligence → .llm-context/
-ccc pkml                  # bootstrap a pkml.json draft from that context
-                          # → product-knowledge/pkml.json
-
-# Then open the PKML editor to refine and publish
+ccc generate          # extract code intelligence → .llm-context/
+ccc pkml              # bootstrap pkml.json draft from that context
+# → open in PKML editor to add positioning, constraints, lessons learned
 ```
 
-CCC’s `ccc pkml` command reads the generated `.llm-context/` files (routes, schemas, tech stack, external dependencies) and produces a `pkml.json` draft with real data pre-filled. You then open it in the PKML editor to add the human knowledge that code can’t express: positioning, user benefits, brand voice, and product intent.
-
------
+---
 
 ## Architecture
 
 ```
-pkml/
-├── backend/
-│   └── server.py          FastAPI — validation, persistence, registry, AI import
-├── frontend/
-│   └── src/
-│       ├── App.js          Router — Editor, Builder, Gallery, Registry, View
-│       ├── pages/
-│       │   ├── EditorPage.jsx     Monaco editor + validation panel
-│       │   ├── BuilderPage.jsx    Visual form builder
-│       │   ├── GalleryPage.jsx    Template browser
-│       │   ├── RegistryPage.jsx   Public registry with search
-│       │   └── ViewPage.jsx       Share link destination
-│       └── lib/
-│           ├── pkmlSchema.js      JSON Schema + Monaco config
-│           └── pkmlExamples.js    Gallery templates
+backend/server.py         FastAPI — v0.2 validation, persistence, registry, AI import, markdown export
+frontend/src/
+  App.js                  Router — Editor, Builder, Gallery, My Documents, Registry, View
+  pages/
+    EditorPage.jsx        Monaco editor + validation panel + save/publish/share + file upload
+    BuilderPage.jsx       Full visual form builder including Engineering sections
+    GalleryPage.jsx       Template browser
+    MyDocumentsPage.jsx   Manage saved documents
+    RegistryPage.jsx      Public registry with search
+    ViewPage.jsx          Share link destination — renders full v0.2 including engineering
+  lib/
+    pkmlSchema.js         v0.2 JSON Schema + Monaco config + DEFAULT_PKML
+    pkmlExamples.js       Gallery templates (5, including full InvoiceFlow v0.2 example)
 ```
 
-**Backend stack:** FastAPI + MongoDB (Motor async driver)
-
-**Frontend stack:** React 19, Tailwind CSS, Monaco Editor, shadcn/ui, react-router-dom v7
-
-**Database:** MongoDB — documents stored in `pkml_documents` collection with slug-based addressing
+**Stack:** FastAPI + MongoDB (Motor) · React 19 + Tailwind + Monaco + shadcn/ui
 
 ### API Endpoints
 
-|Method|Endpoint                   |Purpose                                 |
-|------|---------------------------|----------------------------------------|
-|GET   |`/api/`                    |Health check                            |
-|GET   |`/api/pkml/schema`         |PKML JSON Schema v0.1                   |
-|POST  |`/api/pkml/validate`       |Validate + completeness score           |
-|POST  |`/api/pkml/parse-readme`   |README → PKML (AI-powered)              |
-|POST  |`/api/pkml/export-markdown`|PKML → Markdown docs                    |
-|GET   |`/api/pkml/examples`       |Gallery templates                       |
-|POST  |`/api/pkml/save`           |Save new document                       |
-|PUT   |`/api/pkml/save/:id`       |Update existing document                |
-|GET   |`/api/pkml/document/:slug` |Fetch by slug (share links)             |
-|GET   |`/api/pkml/my-documents`   |List saved documents                    |
-|DELETE|`/api/pkml/document/:id`   |Delete document                         |
-|POST  |`/api/pkml/publish/:id`    |Publish to registry                     |
-|POST  |`/api/pkml/unpublish/:id`  |Remove from registry                    |
-|POST  |`/api/pkml/star/:id`       |Star a registry entry                   |
-|GET   |`/api/pkml/registry`       |Search registry (search, category, sort)|
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/pkml/validate` | Validate + completeness score |
+| POST | `/api/pkml/parse-readme` | README → PKML (AI-powered) |
+| POST | `/api/pkml/export-markdown` | PKML → Markdown (includes engineering section) |
+| POST | `/api/pkml/save` | Save new document |
+| PUT | `/api/pkml/save/:id` | Update existing |
+| GET | `/api/pkml/document/:slug` | Fetch by slug |
+| GET | `/api/pkml/my-documents` | List all documents |
+| DELETE | `/api/pkml/document/:id` | Delete |
+| POST | `/api/pkml/publish/:id` | Publish to registry |
+| POST | `/api/pkml/unpublish/:id` | Remove from registry |
+| POST | `/api/pkml/star/:id` | Star |
+| GET | `/api/pkml/registry` | Search registry |
 
------
+---
 
 ## Running Locally
 
-### Backend
-
 ```bash
+# Backend
 cd backend
 pip install -r requirements.txt
 uvicorn server:app --reload
-```
 
-Requires a running MongoDB instance. Set `MONGO_URL` in `backend/.env`.
-
-Optional: set `ANTHROPIC_API_KEY` in `backend/.env` to enable AI-powered README import.
-
-### Frontend
-
-```bash
+# Frontend
 cd frontend
 yarn install
 yarn start
 ```
 
-Set `REACT_APP_BACKEND_URL` in `frontend/.env`.
-
------
-
-## Configuration
-
-`backend/.env`:
-
+**`backend/.env`:**
 ```env
 MONGO_URL=mongodb://localhost:27017
 DB_NAME=pkml
@@ -275,64 +194,39 @@ CORS_ORIGINS=*
 ANTHROPIC_API_KEY=          # optional — enables AI README import
 ```
 
-`frontend/.env`:
-
+**`frontend/.env`:**
 ```env
 REACT_APP_BACKEND_URL=http://localhost:8000
 ```
 
------
+On first startup the registry is seeded with three example documents (TaskFlow, CCC, InvoiceFlow) so it's never empty.
+
+---
 
 ## Roadmap
 
-### Now — what’s built
-
-- PKML Editor with live validation and completeness scoring
-- Visual Builder covering the full schema
-- Gallery with 5 starter templates
-- Registry with MongoDB persistence, search, stars, forks
-- Share links (`/view/:slug`)
+**Done**
+- PKML v0.2 schema with engineering section
+- Editor, Builder, Gallery, My Documents, Registry, View pages
 - Save / Publish / Share workflow
-- README import (AI-powered with Anthropic, regex fallback)
-- Export to Markdown
+- File upload import with CCC link
+- README import (AI + regex fallback)
+- Export to Markdown (including engineering section)
+- Registry seeding on first startup
+- v0.2 validator with bridge reference checking
 
-### Next
+**Next**
+- Implementation patterns in Builder (step editor)
+- Decision log in Builder
+- `ccc pkml` auto-populates engineering.constraints from code analysis
 
-- **My Documents page** — manage your saved PKMLs, see history
-- **File upload for README import** — drag and drop instead of paste-only
-- **Seeded registry** — starter examples visible before anyone publishes
-- **CCC import button** — load a `pkml.json` generated by `ccc pkml` directly
-- **GitHub Badge** — embeddable badge linking to your registry entry
+**Later**
+- GitHub Action — auto-update PKML on push
+- Collaborative editing
+- Interactive demo generator from workflows
 
-### Later
-
-- **Interactive Demo Generator** — turn workflows into embeddable step-through demos
-- **GitHub Action** — auto-update PKML on push
-- **Collaborative editing** — team ownership of a PKML document
-- **PKML versioning** — track changes over time with diff view
-
------
-
-## Contributing
-
-Contributions are welcome. Especially valuable:
-
-- Additional gallery templates (different product types and industries)
-- Improvements to the completeness scoring logic
-- Language translations for the UI
-- Real-world PKML examples for the registry
-- Schema extensions and proposals
-
------
+---
 
 ## License
 
-MIT — see LICENSE.
-
------
-
-## Status
-
-**Functional and actively developed.**
-
-The editor, builder, gallery, registry, persistence, and share links all work. The platform is usable today for creating and publishing structured product knowledge.
+MIT
