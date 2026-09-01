@@ -1,6 +1,15 @@
 # PKML — Product Knowledge Markup Language
 
-**A structured, machine-readable format for capturing what your product is, what it does, and how it’s built.**
+> **A structured, machine-readable format for capturing what your product is, what it does, and how it’s built.**
+
+
+
+[![CI](https://github.com/benneberg/pkml/actions/workflows/ci.yml/badge.svg)](https://github.com/benneberg/pkml/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/Python-3.11-3776AB.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-19-61DAFB.svg)](https://react.dev/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248.svg)](https://www.mongodb.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 PKML v0.2 is an open standard and web platform for creating, editing, and sharing product knowledge files. A `pkml.json` gives AI tools, documentation systems, and developers a precise, structured understanding of your product — including the engineering team’s accumulated knowledge that never makes it into code comments.
 
