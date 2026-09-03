@@ -1,21 +1,21 @@
-import { useState, useEffect } from “react”;
-import { useParams, useNavigate } from “react-router-dom”;
-import { toast } from “sonner”;
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
 Star, GitFork, Eye, ArrowLeft, Download, Copy,
 Globe, Code2, CheckCircle2, Loader2, ExternalLink,
 Clock, Package, Layers, Server, ShieldAlert, BookOpen,
 GitBranch, AlertTriangle, Workflow,
-} from “lucide-react”;
-import { Button } from “../components/ui/button”;
-import { ScrollArea } from “../components/ui/scroll-area”;
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { ScrollArea } from "../components/ui/scroll-area";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const timeAgo = (iso) => {
 const diff = Date.now() - new Date(iso);
 const d = Math.floor(diff / 86400000);
-if (d < 1) return “today”;
+if (d < 1) return "today";
 if (d < 30) return `${d}d ago`;
 return `${Math.floor(d / 30)}mo ago`;
 };
@@ -33,23 +33,23 @@ const Section = ({ icon: Icon, title, children, accent }) => (
 
 const PriorityBadge = ({ priority }) => {
 const map = {
-p0: “bg-red-500/10 text-red-400 border-red-500/20”,
-p1: “bg-orange-500/10 text-orange-400 border-orange-500/20”,
-p2: “bg-yellow-500/10 text-yellow-400 border-yellow-500/20”,
-p3: “bg-zinc-800 text-zinc-400 border-zinc-700”,
-primary: “bg-indigo-500/10 text-indigo-400 border-indigo-500/20”,
-secondary: “bg-purple-500/10 text-purple-400 border-purple-500/20”,
+p0: "bg-red-500/10 text-red-400 border-red-500/20",
+p1: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+p2: "bg-yellow-500/10 text-yellow-400 border-yellow-500/20",
+p3: "bg-zinc-800 text-zinc-400 border-zinc-700",
+primary: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+secondary: "bg-purple-500/10 text-purple-400 border-purple-500/20",
 };
-const cls = map[priority] || “bg-zinc-800 text-zinc-400 border-zinc-700”;
+const cls = map[priority] || "bg-zinc-800 text-zinc-400 border-zinc-700";
 return <span className={`text-[10px] px-2 py-0.5 rounded border font-medium ${cls}`}>{priority}</span>;
 };
 
 const StatusBadge = ({ status }) => {
 const map = {
-live: “✅ live”,
-wip: “🔧 in progress”,
-planned: “📋 planned”,
-deprecated: “❌ deprecated”,
+live: "✅ live",
+wip: "🔧 in progress",
+planned: "📋 planned",
+deprecated: "❌ deprecated",
 };
 return status ? (
 <span className="text-[10px] text-zinc-500 font-mono">{map[status] || status}</span>
@@ -57,8 +57,8 @@ return status ? (
 };
 
 const SevBadge = ({ severity }) => {
-const map = { critical: “🔴”, high: “🟠”, medium: “🟡”, low: “🟢” };
-return <span className="text-xs">{map[severity] || “⚪”} {severity}</span>;
+const map = { critical: "🔴", high: "🟠", medium: "🟡", low: "🟢" };
+return <span className="text-xs">{map[severity] || "⚪"} {severity}</span>;
 };
 
 export const ViewPage = ({ onFork }) => {
@@ -73,11 +73,11 @@ useEffect(() => {
 const fetchDoc = async () => {
 try {
 const res = await fetch(`${BACKEND_URL}/api/pkml/document/${slug}`);
-if (!res.ok) throw new Error(“Not found”);
+if (!res.ok) throw new Error("Not found");
 setDoc(await res.json());
 } catch {
-toast.error(“Document not found”);
-navigate(”/registry”);
+toast.error("Document not found");
+navigate("/registry");
 } finally {
 setLoading(false);
 }
@@ -103,25 +103,25 @@ const eng = content.engineering || {};
 const handleCopy = () => {
 navigator.clipboard.writeText(JSON.stringify(content, null, 2));
 setCopied(true); setTimeout(() => setCopied(false), 2000);
-toast.success(“Copied!”);
+toast.success("Copied!");
 };
 
 const handleDownload = () => {
-const a = Object.assign(document.createElement(“a”), {
-href: URL.createObjectURL(new Blob([JSON.stringify(content, null, 2)], { type: “application/json” })),
+const a = Object.assign(document.createElement("a"), {
+href: URL.createObjectURL(new Blob([JSON.stringify(content, null, 2)], { type: "application/json" })),
 download: `${slug}.pkml.json`,
 });
 a.click(); URL.revokeObjectURL(a.href);
-toast.success(“Downloaded!”);
+toast.success("Downloaded!");
 };
 
 const handleFork = () => {
 const forked = JSON.parse(JSON.stringify(content));
-forked.meta = { …forked.meta, last_updated: new Date().toISOString(), version: “1.0.0” };
+forked.meta = { ...forked.meta, last_updated: new Date().toISOString(), version: "1.0.0" };
 if (forked.product?.name) forked.product.name = `${forked.product.name} (fork)`;
 onFork(JSON.stringify(forked, null, 2));
-toast.success(“Forked! Switch to Editor to customize.”);
-navigate(”/”);
+toast.success("Forked! Switch to Editor to customize.");
+navigate("/");
 };
 
 const badgeMd = `[![PKML](https://pkml.dev/badge/${slug}.svg)](${window.location.href})`;
@@ -143,17 +143,17 @@ return (
 <div className="h-[calc(100vh-4rem)] flex flex-col" data-testid="view-page">
 {/* Header */}
 <div className="border-b border-zinc-800 bg-zinc-950 px-6 py-3 flex items-center gap-4 flex-wrap">
-<button onClick={() => navigate(-1)} className=“flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 text-sm transition-colors”>
+<button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-zinc-500 hover:text-zinc-300 text-sm transition-colors">
 <ArrowLeft className="w-4 h-4" /> Back
 </button>
 <div className="flex-1" />
 <div className="flex items-center gap-2">
 <button onClick={() => setShowRaw(!showRaw)}
 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${showRaw ? "bg-indigo-500/10 text-indigo-400" : "text-zinc-500 hover:text-zinc-300"}`}>
-<Code2 className="w-3.5 h-3.5" /> {showRaw ? “Formatted” : “Raw JSON”}
+<Code2 className="w-3.5 h-3.5" /> {showRaw ? "Formatted" : "Raw JSON"}
 </button>
 <Button variant="outline" size="sm" onClick={handleCopy} className="gap-1.5">
-<Copy className="w-3.5 h-3.5" />{copied ? “Copied!” : “Copy”}
+<Copy className="w-3.5 h-3.5" />{copied ? "Copied!" : "Copy"}
 </Button>
 <Button variant="outline" size="sm" onClick={handleDownload} className="gap-1.5">
 <Download className="w-3.5 h-3.5" /> Download

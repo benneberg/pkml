@@ -1,39 +1,39 @@
-import { useState, useEffect, useCallback } from “react”;
-import { useNavigate } from “react-router-dom”;
-import { toast } from “sonner”;
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
 Star, GitFork, Eye, Search, Globe, Tag,
 ArrowRight, TrendingUp, Clock, Loader2, RefreshCw
-} from “lucide-react”;
-import { Button } from “../components/ui/button”;
-import { ScrollArea } from “../components/ui/scroll-area”;
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { ScrollArea } from "../components/ui/scroll-area";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CATEGORY_COLORS = {
-productivity: “bg-indigo-500/10 text-indigo-400 border-indigo-500/20”,
-“developer-tools”: “bg-purple-500/10 text-purple-400 border-purple-500/20”,
-devtool: “bg-purple-500/10 text-purple-400 border-purple-500/20”,
-saas: “bg-blue-500/10 text-blue-400 border-blue-500/20”,
-ai: “bg-pink-500/10 text-pink-400 border-pink-500/20”,
-api: “bg-orange-500/10 text-orange-400 border-orange-500/20”,
-mobile: “bg-rose-500/10 text-rose-400 border-rose-500/20”,
-security: “bg-red-500/10 text-red-400 border-red-500/20”,
-fintech: “bg-emerald-500/10 text-emerald-400 border-emerald-500/20”,
-collaboration: “bg-cyan-500/10 text-cyan-400 border-cyan-500/20”,
+productivity: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+"developer-tools": "bg-purple-500/10 text-purple-400 border-purple-500/20",
+devtool: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+saas: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+ai: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+api: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+mobile: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+security: "bg-red-500/10 text-red-400 border-red-500/20",
+fintech: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+collaboration: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
 };
 
 const timeAgo = (iso) => {
 const diff = Date.now() - new Date(iso);
 const d = Math.floor(diff / 86400000);
-if (d < 1) return “today”;
+if (d < 1) return "today";
 if (d < 30) return `${d}d ago`;
 if (d < 365) return `${Math.floor(d / 30)}mo ago`;
 return `${Math.floor(d / 365)}y ago`;
 };
 
 const CategoryPill = ({ cat }) => {
-const cls = CATEGORY_COLORS[cat] || “bg-zinc-800 text-zinc-400 border-zinc-700”;
+const cls = CATEGORY_COLORS[cat] || "bg-zinc-800 text-zinc-400 border-zinc-700";
 return (
 <span className={`text-[10px] px-2 py-0.5 rounded border ${cls} font-medium`}>{cat}</span>
 );
@@ -44,14 +44,14 @@ const navigate = useNavigate();
 const product = doc.content?.product || {};
 const cats = product.category || [];
 const stack = [
-…(doc.content?.tech_stack?.frontend || []),
-…(doc.content?.tech_stack?.backend || []),
-…(doc.content?.tech_stack?.databases || []),
+...(doc.content?.tech_stack?.frontend || []),
+...(doc.content?.tech_stack?.backend || []),
+...(doc.content?.tech_stack?.databases || []),
 ].slice(0, 4);
 
 return (
 <div
-className=“gallery-card group flex flex-col cursor-pointer”
+className="gallery-card group flex flex-col cursor-pointer"
 onClick={() => navigate(`/view/${doc.slug}`)}
 data-testid={`registry-card-${doc.slug}`}
 >
@@ -107,31 +107,31 @@ data-testid={`registry-card-${doc.slug}`}
 };
 
 const SORT_OPTIONS = [
-{ value: “stars”, label: “Most Starred”, icon: Star },
-{ value: “views”, label: “Most Viewed”, icon: TrendingUp },
-{ value: “updated_at”, label: “Recently Updated”, icon: Clock },
+{ value: "stars", label: "Most Starred", icon: Star },
+{ value: "views", label: "Most Viewed", icon: TrendingUp },
+{ value: "updated_at", label: "Recently Updated", icon: Clock },
 ];
 
 export const RegistryPage = ({ onForkTemplate }) => {
 const [docs, setDocs] = useState([]);
 const [total, setTotal] = useState(0);
 const [loading, setLoading] = useState(true);
-const [search, setSearch] = useState(””);
-const [sort, setSort] = useState(“stars”);
-const [searchInput, setSearchInput] = useState(””);
+const [search, setSearch] = useState("");
+const [sort, setSort] = useState("stars");
+const [searchInput, setSearchInput] = useState("");
 
 const fetchRegistry = useCallback(async () => {
 setLoading(true);
 try {
-const params = new URLSearchParams({ sort, limit: “50” });
-if (search) params.set(“search”, search);
+const params = new URLSearchParams({ sort, limit: "50" });
+if (search) params.set("search", search);
 const res = await fetch(`${BACKEND_URL}/api/pkml/registry?${params}`);
-if (!res.ok) throw new Error(“Failed to fetch registry”);
+if (!res.ok) throw new Error("Failed to fetch registry");
 const data = await res.json();
 setDocs(data.items || []);
 setTotal(data.total || 0);
 } catch (err) {
-toast.error(“Could not load registry”);
+toast.error("Could not load registry");
 setDocs([]);
 } finally {
 setLoading(false);
@@ -147,19 +147,19 @@ setSearch(searchInput);
 
 const handleStar = async (id) => {
 try {
-const res = await fetch(`${BACKEND_URL}/api/pkml/star/${id}`, { method: “POST” });
+const res = await fetch(`${BACKEND_URL}/api/pkml/star/${id}`, { method: "POST" });
 if (!res.ok) throw new Error();
 const data = await res.json();
-setDocs((prev) => prev.map((d) => d.id === id ? { …d, stars: data.stars } : d));
-toast.success(“⭐ Starred!”);
+setDocs((prev) => prev.map((d) => d.id === id ? { ...d, stars: data.stars } : d));
+toast.success("⭐ Starred!");
 } catch {
-toast.error(“Could not star”);
+toast.error("Could not star");
 }
 };
 
 const handleFork = (doc) => {
 const forked = JSON.parse(JSON.stringify(doc.content));
-forked.meta = { …forked.meta, last_updated: new Date().toISOString(), version: “1.0.0” };
+forked.meta = { ...forked.meta, last_updated: new Date().toISOString(), version: "1.0.0" };
 if (forked.product?.name) forked.product.name = `${forked.product.name} (fork)`;
 onForkTemplate(JSON.stringify(forked, null, 2));
 toast.success(`Forked "${doc.title}" — switch to Editor to customize`);
@@ -176,7 +176,7 @@ return (
 </div>
 <h1 className="text-2xl font-extrabold text-white tracking-tight mb-1">PKML Registry</h1>
 <p className="text-sm text-zinc-400">
-Discover, fork, and publish structured product knowledge. {total > 0 && <span className="text-zinc-500">{total} {total === 1 ? “entry” : “entries”} published.</span>}
+Discover, fork, and publish structured product knowledge. {total > 0 && <span className="text-zinc-500">{total} {total === 1 ? "entry" : "entries"} published.</span>}
 </p>
 
 ```

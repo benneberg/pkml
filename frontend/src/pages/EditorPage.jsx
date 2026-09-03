@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback, useRef } from “react”;
-import Editor from “@monaco-editor/react”;
-import { toast } from “sonner”;
-import { useNavigate } from “react-router-dom”;
+import { useState, useEffect, useCallback, useRef } from "react";
+import Editor from "@monaco-editor/react";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import {
 CheckCircle2,
 XCircle,
@@ -21,14 +21,14 @@ Share2,
 Globe,
 Link,
 BookMarked
-} from “lucide-react”;
-import { Button } from “../components/ui/button”;
-import { ScrollArea } from “../components/ui/scroll-area”;
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { ScrollArea } from "../components/ui/scroll-area";
 import {
 ResizablePanelGroup,
 ResizablePanel,
 ResizableHandle
-} from “../components/ui/resizable”;
+} from "../components/ui/resizable";
 import {
 Dialog,
 DialogContent,
@@ -36,10 +36,10 @@ DialogDescription,
 DialogHeader,
 DialogTitle,
 DialogTrigger,
-} from “../components/ui/dialog”;
-import { Textarea } from “../components/ui/textarea”;
-import { DEFAULT_PKML, MONACO_OPTIONS, configureMonaco } from “../lib/pkmlSchema”;
-import { PKML_EXAMPLES, generateFreshExample } from “../lib/pkmlExamples”;
+} from "../components/ui/dialog";
+import { Textarea } from "../components/ui/textarea";
+import { DEFAULT_PKML, MONACO_OPTIONS, configureMonaco } from "../lib/pkmlSchema";
+import { PKML_EXAMPLES, generateFreshExample } from "../lib/pkmlExamples";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -186,13 +186,13 @@ return (
 
 // Import README Dialog
 const ImportReadmeDialog = ({ onImport }) => {
-const [readmeContent, setReadmeContent] = useState(””);
+const [readmeContent, setReadmeContent] = useState("");
 const [isImporting, setIsImporting] = useState(false);
 const [open, setOpen] = useState(false);
 
 const handleImport = async () => {
 if (!readmeContent.trim()) {
-toast.error(“Please enter README content”);
+toast.error("Please enter README content");
 return;
 }
 
@@ -246,27 +246,27 @@ Paste your README.md content below to generate a draft PKML document
 <Textarea
 value={readmeContent}
 onChange={(e) => setReadmeContent(e.target.value)}
-placeholder=”# My Product
+placeholder="# My Product
 
-A brief description of your product…
+A brief description of your product...
 
 ## Features
 
 - Feature 1
-- Feature 2”
-  className=“h-64 font-mono text-sm bg-zinc-950 border-zinc-800 text-white placeholder:text-zinc-600”
-  data-testid=“readme-textarea”
+- Feature 2"
+  className="h-64 font-mono text-sm bg-zinc-950 border-zinc-800 text-white placeholder:text-zinc-600"
+  data-testid="readme-textarea"
   />
 
 <div className="flex justify-end gap-2">
-<Button variant=“outline” onClick={() => setOpen(false)} data-testid=“cancel-import-btn”>
+<Button variant="outline" onClick={() => setOpen(false)} data-testid="cancel-import-btn">
 Cancel
 </Button>
 <Button onClick={handleImport} disabled={isImporting} data-testid="confirm-import-btn">
 {isImporting ? (
 <>
 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-Importing…
+Importing...
 </>
 ) : (
 <>
@@ -290,7 +290,7 @@ const handleSelect = (exampleId) => {
 const content = generateFreshExample(exampleId);
 if (content) {
 onGenerate(JSON.stringify(content, null, 2));
-toast.success(“Example loaded!”);
+toast.success("Example loaded!");
 setOpen(false);
 }
 };
@@ -316,7 +316,7 @@ Choose a template to start with
 <button
 key={example.id}
 onClick={() => handleSelect(example.id)}
-className=“w-full flex items-center gap-3 p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 hover:border-zinc-600 transition-colors text-left group”
+className="w-full flex items-center gap-3 p-3 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 border border-zinc-700/50 hover:border-zinc-600 transition-colors text-left group"
 data-testid={`example-${example.id}`}
 >
 <div className="flex-1">
@@ -340,15 +340,15 @@ const fileRef = useRef(null);
 
 const handleFile = (file) => {
 if (!file) return;
-if (!file.name.endsWith(”.json”)) { toast.error(“Please upload a .json file”); return; }
+if (!file.name.endsWith(".json")) { toast.error("Please upload a .json file"); return; }
 const reader = new FileReader();
 reader.onload = (e) => {
 try {
 const parsed = JSON.parse(e.target.result);
 onImport(JSON.stringify(parsed, null, 2));
-toast.success(“Imported successfully!”);
+toast.success("Imported successfully!");
 setOpen(false);
-} catch { toast.error(“Invalid JSON — could not parse file”); }
+} catch { toast.error("Invalid JSON — could not parse file"); }
 };
 reader.readAsText(file);
 };
@@ -378,11 +378,11 @@ className={`mt-2 border-2 border-dashed rounded-lg p-8 text-center cursor-pointe
 <FolderOpen className="w-8 h-8 text-zinc-500 mx-auto mb-3" />
 <p className="text-sm text-zinc-300 font-medium">Drop a pkml.json file here</p>
 <p className="text-xs text-zinc-600 mt-1">or click to browse</p>
-<input ref={fileRef} type=“file” accept=”.json,application/json” className=“hidden”
+<input ref={fileRef} type="file" accept=".json,application/json" className="hidden"
 onChange={(e) => handleFile(e.target.files[0])} />
 </div>
 <p className="text-xs text-zinc-600 mt-2">
-{“Don’t have one? “}
+{"Don't have one? "}
 <a href="https://github.com/benneberg/contextcompiler" target="_blank" rel="noopener noreferrer"
 className="text-indigo-400 hover:underline">Generate from your codebase with CCC →</a>
 </p>
@@ -397,57 +397,57 @@ const navigate = useNavigate();
 const [validation, setValidation] = useState(null);
 const [isValidating, setIsValidating] = useState(false);
 const [isSaving, setIsSaving] = useState(false);
-const [savedDocId, setSavedDocId] = useState(() => localStorage.getItem(“pkml-doc-id”) || null);
-const [savedSlug, setSavedSlug] = useState(() => localStorage.getItem(“pkml-doc-slug”) || null);
+const [savedDocId, setSavedDocId] = useState(() => localStorage.getItem("pkml-doc-id") || null);
+const [savedSlug, setSavedSlug] = useState(() => localStorage.getItem("pkml-doc-slug") || null);
 const editorRef = useRef(null);
 const validationTimeoutRef = useRef(null);
 
 // Save to MongoDB
 const handleSave = async (publish = false) => {
-if (!content?.trim()) { toast.error(“Nothing to save”); return; }
-try { JSON.parse(content); } catch { toast.error(“Fix JSON errors before saving”); return; }
+if (!content?.trim()) { toast.error("Nothing to save"); return; }
+try { JSON.parse(content); } catch { toast.error("Fix JSON errors before saving"); return; }
 setIsSaving(true);
 try {
-const method = savedDocId ? “PUT” : “POST”;
+const method = savedDocId ? "PUT" : "POST";
 const url = savedDocId
 ? `${BACKEND_URL}/api/pkml/save/${docId}`
 : `${BACKEND_URL}/api/pkml/save`;
 const res = await fetch(url, {
 method,
-headers: { “Content-Type”: “application/json” },
+headers: { "Content-Type": "application/json" },
 body: JSON.stringify({ content, published: publish }),
 });
-if (!res.ok) throw new Error(“Save failed”);
+if (!res.ok) throw new Error("Save failed");
 const data = await res.json();
 setSavedDocId(data.id);
 setSavedSlug(data.slug);
-localStorage.setItem(“pkml-doc-id”, data.id);
-localStorage.setItem(“pkml-doc-slug”, data.slug);
+localStorage.setItem("pkml-doc-id", data.id);
+localStorage.setItem("pkml-doc-slug", data.slug);
 if (publish) {
-toast.success(“Published to Registry! 🎉”);
+toast.success("Published to Registry! 🎉");
 navigate(`/view/${data.slug}`);
 } else {
-toast.success(“Saved! Share link ready.”);
+toast.success("Saved! Share link ready.");
 }
 } catch {
-toast.error(“Save failed — check backend connection”);
+toast.error("Save failed — check backend connection");
 } finally {
 setIsSaving(false);
 }
 };
 
 const handleCopyShareLink = () => {
-if (!savedSlug) { toast.error(“Save first to get a share link”); return; }
+if (!savedSlug) { toast.error("Save first to get a share link"); return; }
 const url = `${window.location.origin}/view/${savedSlug}`;
 navigator.clipboard.writeText(url);
-toast.success(“Share link copied!”);
+toast.success("Share link copied!");
 };
 
 // Configure Monaco on mount
 const handleEditorMount = (editor, monaco) => {
 editorRef.current = editor;
 configureMonaco(monaco);
-monaco.editor.setTheme(‘pkml-dark’);
+monaco.editor.setTheme('pkml-dark');
 };
 
 // Validate content
@@ -518,13 +518,13 @@ return () => {
 
 // Handle content change from editor
 const handleEditorChange = (value) => {
-onContentChange(value || “”);
+onContentChange(value || "");
 };
 
 // Download PKML as JSON
 const handleDownload = () => {
 if (!content) {
-toast.error(“No content to download”);
+toast.error("No content to download");
 return;
 }
 
@@ -552,7 +552,7 @@ try {
 // Export to Markdown
 const handleExportMarkdown = async () => {
 if (!content) {
-toast.error(“No content to export”);
+toast.error("No content to export");
 return;
 }
 
@@ -588,11 +588,11 @@ try {
 // Copy to clipboard
 const handleCopy = () => {
 if (!content) {
-toast.error(“No content to copy”);
+toast.error("No content to copy");
 return;
 }
 navigator.clipboard.writeText(content);
-toast.success(“Copied to clipboard!”);
+toast.success("Copied to clipboard!");
 };
 
 // Format JSON
@@ -601,9 +601,9 @@ if (!content) return;
 try {
 const formatted = JSON.stringify(JSON.parse(content), null, 2);
 onContentChange(formatted);
-toast.success(“Formatted!”);
+toast.success("Formatted!");
 } catch (error) {
-toast.error(“Cannot format invalid JSON”);
+toast.error("Cannot format invalid JSON");
 }
 };
 
@@ -611,7 +611,7 @@ toast.error(“Cannot format invalid JSON”);
 const handleNew = () => {
 const newContent = JSON.stringify(DEFAULT_PKML, null, 2);
 onContentChange(newContent);
-toast.success(“New PKML created!”);
+toast.success("New PKML created!");
 };
 
 return (

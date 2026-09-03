@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from “react”;
-import { toast } from “sonner”;
+import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import {
 Plus,
 Trash2,
@@ -22,26 +22,26 @@ BookOpen,
 GitBranch,
 AlertTriangle,
 ExternalLink,
-} from “lucide-react”;
-import { Button } from “../components/ui/button”;
-import { Input } from “../components/ui/input”;
-import { Textarea } from “../components/ui/textarea”;
-import { Label } from “../components/ui/label”;
-import { ScrollArea } from “../components/ui/scroll-area”;
-import { Badge } from “../components/ui/badge”;
+} from "lucide-react";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import { Label } from "../components/ui/label";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Badge } from "../components/ui/badge";
 import {
 Select,
 SelectContent,
 SelectItem,
 SelectTrigger,
 SelectValue,
-} from “../components/ui/select”;
+} from "../components/ui/select";
 import {
 Collapsible,
 CollapsibleContent,
 CollapsibleTrigger,
-} from “../components/ui/collapsible”;
-import { DEFAULT_PKML } from “../lib/pkmlSchema”;
+} from "../components/ui/collapsible";
+import { DEFAULT_PKML } from "../lib/pkmlSchema";
 
 // ─── Section wrapper ────────────────────────────────────────────────────────
 const FormSection = ({ title, icon: Icon, children, defaultOpen = false, badge }) => {
@@ -51,7 +51,7 @@ return (
 <Collapsible open={isOpen} onOpenChange={setIsOpen}>
 <CollapsibleTrigger asChild>
 <button
-className=“w-full flex items-center gap-3 p-4 bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 rounded-lg transition-colors”
+className="w-full flex items-center gap-3 p-4 bg-zinc-900 hover:bg-zinc-800/80 border border-zinc-800 rounded-lg transition-colors"
 data-testid={`section-${title.toLowerCase().replace(/\s/g, "-")}`}
 >
 <Icon className="w-5 h-5 text-indigo-400 flex-shrink-0" />
@@ -102,21 +102,21 @@ const SectionDivider = ({ label }) => (
 const FeatureEditor = ({ feature, index, onUpdate, onRemove }) => {
 const [isOpen, setIsOpen] = useState(index === 0);
 
-const handleChange = (field, value) => onUpdate(index, { …feature, [field]: value });
+const handleChange = (field, value) => onUpdate(index, { ...feature, [field]: value });
 
 return (
 <Collapsible open={isOpen} onOpenChange={setIsOpen}>
 <div className="border border-zinc-700 rounded-lg overflow-hidden">
 <CollapsibleTrigger asChild>
 <button
-className=“w-full flex items-center gap-3 p-3 bg-zinc-800/50 hover:bg-zinc-800 transition-colors”
+className="w-full flex items-center gap-3 p-3 bg-zinc-800/50 hover:bg-zinc-800 transition-colors"
 data-testid={`feature-${index}-trigger`}
 >
 <GripVertical className="w-4 h-4 text-zinc-600" />
 <span className="flex-1 text-left text-sm font-medium text-white">
 {feature.name || `Feature ${index + 1}`}
 </span>
-<span className={`text-xs px-2 py-0.5 rounded ${ feature.priority === "primary" ? "bg-indigo-500/20 text-indigo-400" : feature.priority === "secondary" ? "bg-purple-500/20 text-purple-400" : "bg-zinc-700 text-zinc-400" }`}>{feature.priority || “primary”}</span>
+<span className={`text-xs px-2 py-0.5 rounded ${ feature.priority === "primary" ? "bg-indigo-500/20 text-indigo-400" : feature.priority === "secondary" ? "bg-purple-500/20 text-purple-400" : "bg-zinc-700 text-zinc-400" }`}>{feature.priority || "primary"}</span>
 {isOpen ? <ChevronDown className="w-4 h-4 text-zinc-400" /> : <ChevronRight className="w-4 h-4 text-zinc-400" />}
 </button>
 </CollapsibleTrigger>
@@ -124,13 +124,13 @@ data-testid={`feature-${index}-trigger`}
 <div className="p-3 space-y-3 bg-zinc-900/50">
 <div className="grid grid-cols-2 gap-3">
 <FormField label="ID" required>
-<Input value={feature.id || “”} onChange={(e) => handleChange(“id”, e.target.value)}
-placeholder=“feat_my_feature” className=“bg-zinc-950 border-zinc-700 text-white font-mono text-sm”
+<Input value={feature.id || ""} onChange={(e) => handleChange("id", e.target.value)}
+placeholder="feat_my_feature" className="bg-zinc-950 border-zinc-700 text-white font-mono text-sm"
 data-testid={`feature-${index}-id`} />
 </FormField>
 <FormField label="Priority" required hint="p0=critical, p3=nice-to-have">
-<Select value={feature.priority || “p1”} onValueChange={(v) => handleChange(“priority”, v)}>
-<SelectTrigger className=“bg-zinc-950 border-zinc-700 text-white” data-testid={`feature-${index}-priority`}>
+<Select value={feature.priority || "p1"} onValueChange={(v) => handleChange("priority", v)}>
+<SelectTrigger className="bg-zinc-950 border-zinc-700 text-white" data-testid={`feature-${index}-priority`}>
 <SelectValue />
 </SelectTrigger>
 <SelectContent className="bg-zinc-900 border-zinc-700">
@@ -143,23 +143,23 @@ data-testid={`feature-${index}-id`} />
 </FormField>
 </div>
 <FormField label="Name" required>
-<Input value={feature.name || “”} onChange={(e) => handleChange(“name”, e.target.value)}
-placeholder=“Feature name” className=“bg-zinc-950 border-zinc-700 text-white”
+<Input value={feature.name || ""} onChange={(e) => handleChange("name", e.target.value)}
+placeholder="Feature name" className="bg-zinc-950 border-zinc-700 text-white"
 data-testid={`feature-${index}-name`} />
 </FormField>
 <FormField label="Description" required>
-<Textarea value={feature.description || “”} onChange={(e) => handleChange(“description”, e.target.value)}
-placeholder=“What does this feature do?” className=“bg-zinc-950 border-zinc-700 text-white resize-none”
+<Textarea value={feature.description || ""} onChange={(e) => handleChange("description", e.target.value)}
+placeholder="What does this feature do?" className="bg-zinc-950 border-zinc-700 text-white resize-none"
 rows={2} data-testid={`feature-${index}-description`} />
 </FormField>
 <FormField label="User Benefit" required>
-<Input value={feature.user_benefit || “”} onChange={(e) => handleChange(“user_benefit”, e.target.value)}
-placeholder=“Why it matters to users” className=“bg-zinc-950 border-zinc-700 text-white”
+<Input value={feature.user_benefit || ""} onChange={(e) => handleChange("user_benefit", e.target.value)}
+placeholder="Why it matters to users" className="bg-zinc-950 border-zinc-700 text-white"
 data-testid={`feature-${index}-benefit`} />
 </FormField>
 <div className="grid grid-cols-2 gap-3">
 <FormField label="Status">
-<Select value={feature.status || “”} onValueChange={(v) => handleChange(“status”, v)}>
+<Select value={feature.status || ""} onValueChange={(v) => handleChange("status", v)}>
 <SelectTrigger className="bg-zinc-950 border-zinc-700 text-white"><SelectValue placeholder="Select status" /></SelectTrigger>
 <SelectContent className="bg-zinc-900 border-zinc-700">
 <SelectItem value="planned">📋 Planned</SelectItem>
@@ -170,25 +170,25 @@ data-testid={`feature-${index}-benefit`} />
 </Select>
 </FormField>
 <FormField label="Introduced" hint="YYYY-MM-DD">
-<Input value={feature.introduced || “”} onChange={(e) => handleChange(“introduced”, e.target.value)}
-placeholder=“2024-01-15” className=“bg-zinc-950 border-zinc-700 text-white font-mono text-sm” />
+<Input value={feature.introduced || ""} onChange={(e) => handleChange("introduced", e.target.value)}
+placeholder="2024-01-15" className="bg-zinc-950 border-zinc-700 text-white font-mono text-sm" />
 </FormField>
 </div>
 <div className="grid grid-cols-2 gap-3">
 <FormField label="Keywords" hint="Comma-separated">
 <Input
-value={(feature.keywords || []).join(”, “)}
-onChange={(e) => handleChange(“keywords”, e.target.value.split(”,”).map((k) => k.trim()).filter(Boolean))}
-placeholder=“keyword1, keyword2” className=“bg-zinc-950 border-zinc-700 text-white”
+value={(feature.keywords || []).join(", ")}
+onChange={(e) => handleChange("keywords", e.target.value.split(",").map((k) => k.trim()).filter(Boolean))}
+placeholder="keyword1, keyword2" className="bg-zinc-950 border-zinc-700 text-white"
 data-testid={`feature-${index}-keywords`} />
 </FormField>
 <FormField label="Technical Details">
-<Input value={feature.technical_details || “”} onChange={(e) => handleChange(“technical_details”, e.target.value)}
-placeholder=“Implementation notes” className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={feature.technical_details || ""} onChange={(e) => handleChange("technical_details", e.target.value)}
+placeholder="Implementation notes" className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 </div>
 <div className="flex justify-end pt-1">
-<Button variant=“destructive” size=“sm” onClick={() => onRemove(index)}
+<Button variant="destructive" size="sm" onClick={() => onRemove(index)}
 data-testid={`feature-${index}-remove`}>
 <Trash2 className="w-4 h-4 mr-1" /> Remove
 </Button>
@@ -239,23 +239,23 @@ const WorkflowStepEditor = ({ step, index, onChange, onRemove }) => (
 const WorkflowEditor = ({ workflow, index, onUpdate, onRemove }) => {
 const [isOpen, setIsOpen] = useState(index === 0);
 
-const handleChange = (field, value) => onUpdate(index, { …workflow, [field]: value });
+const handleChange = (field, value) => onUpdate(index, { ...workflow, [field]: value });
 
 const addStep = () => {
 const steps = workflow.steps || [];
-handleChange(“steps”, […steps, { order: steps.length + 1, action: “”, expected_outcome: “” }]);
+handleChange("steps", [...steps, { order: steps.length + 1, action: "", expected_outcome: "" }]);
 };
 
 const updateStep = (si, step) => {
-const steps = […(workflow.steps || [])];
-steps[si] = { …step, order: si + 1 };
-handleChange(“steps”, steps);
+const steps = [...(workflow.steps || [])];
+steps[si] = { ...step, order: si + 1 };
+handleChange("steps", steps);
 };
 
 const removeStep = (si) => {
-const steps = […(workflow.steps || [])];
+const steps = [...(workflow.steps || [])];
 steps.splice(si, 1);
-handleChange(“steps”, steps.map((s, i) => ({ …s, order: i + 1 })));
+handleChange("steps", steps.map((s, i) => ({ ...s, order: i + 1 })));
 };
 
 return (
@@ -270,7 +270,7 @@ return (
 <span className="text-xs px-2 py-0.5 rounded bg-zinc-700 text-zinc-400">
 {(workflow.steps || []).length} steps
 </span>
-<span className={`text-xs px-2 py-0.5 rounded ${ workflow.difficulty === "beginner" ? "bg-green-500/20 text-green-400" : workflow.difficulty === "advanced" ? "bg-red-500/20 text-red-400" : "bg-yellow-500/20 text-yellow-400" }`}>{workflow.difficulty || “beginner”}</span>
+<span className={`text-xs px-2 py-0.5 rounded ${ workflow.difficulty === "beginner" ? "bg-green-500/20 text-green-400" : workflow.difficulty === "advanced" ? "bg-red-500/20 text-red-400" : "bg-yellow-500/20 text-yellow-400" }`}>{workflow.difficulty || "beginner"}</span>
 {isOpen ? <ChevronDown className="w-4 h-4 text-zinc-400" /> : <ChevronRight className="w-4 h-4 text-zinc-400" />}
 </button>
 </CollapsibleTrigger>
@@ -278,11 +278,11 @@ return (
 <div className="p-3 space-y-3 bg-zinc-900/50">
 <div className="grid grid-cols-3 gap-3">
 <FormField label="ID" required>
-<Input value={workflow.id || “”} onChange={(e) => handleChange(“id”, e.target.value)}
-placeholder=“workflow_onboarding” className=“bg-zinc-950 border-zinc-700 text-white font-mono text-sm” />
+<Input value={workflow.id || ""} onChange={(e) => handleChange("id", e.target.value)}
+placeholder="workflow_onboarding" className="bg-zinc-950 border-zinc-700 text-white font-mono text-sm" />
 </FormField>
 <FormField label="Difficulty" required>
-<Select value={workflow.difficulty || “beginner”} onValueChange={(v) => handleChange(“difficulty”, v)}>
+<Select value={workflow.difficulty || "beginner"} onValueChange={(v) => handleChange("difficulty", v)}>
 <SelectTrigger className="bg-zinc-950 border-zinc-700 text-white">
 <SelectValue />
 </SelectTrigger>
@@ -294,23 +294,23 @@ placeholder=“workflow_onboarding” className=“bg-zinc-950 border-zinc-700 t
 </Select>
 </FormField>
 <FormField label="Estimated Time">
-<Input value={workflow.estimated_time || “”} onChange={(e) => handleChange(“estimated_time”, e.target.value)}
-placeholder=“5 minutes” className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={workflow.estimated_time || ""} onChange={(e) => handleChange("estimated_time", e.target.value)}
+placeholder="5 minutes" className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 </div>
 <FormField label="Name" required>
-<Input value={workflow.name || “”} onChange={(e) => handleChange(“name”, e.target.value)}
-placeholder=“Create Your First Task” className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={workflow.name || ""} onChange={(e) => handleChange("name", e.target.value)}
+placeholder="Create Your First Task" className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 <FormField label="Description" required>
-<Textarea value={workflow.description || “”} onChange={(e) => handleChange(“description”, e.target.value)}
-placeholder=“What this workflow accomplishes” className=“bg-zinc-950 border-zinc-700 text-white resize-none”
+<Textarea value={workflow.description || ""} onChange={(e) => handleChange("description", e.target.value)}
+placeholder="What this workflow accomplishes" className="bg-zinc-950 border-zinc-700 text-white resize-none"
 rows={2} />
 </FormField>
 <FormField label="Outcome" required hint="What the user achieves at the end">
-<Input value={workflow.outcome || “”} onChange={(e) => handleChange(“outcome”, e.target.value)}
-placeholder=“User has successfully created and assigned a task”
-className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={workflow.outcome || ""} onChange={(e) => handleChange("outcome", e.target.value)}
+placeholder="User has successfully created and assigned a task"
+className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 
 ```
@@ -351,39 +351,39 @@ className=“bg-zinc-950 border-zinc-700 text-white” />
 
 // ─── Integration editor ─────────────────────────────────────────────────────
 const IntegrationEditor = ({ integration, index, onUpdate, onRemove }) => {
-const handleChange = (field, value) => onUpdate(index, { …integration, [field]: value });
+const handleChange = (field, value) => onUpdate(index, { ...integration, [field]: value });
 
 return (
 <div className="border border-zinc-700 rounded-lg p-3 space-y-3 bg-zinc-900/30">
 <div className="flex items-center justify-between">
 <span className="text-xs font-mono text-zinc-500">integration_{index + 1}</span>
-<button onClick={() => onRemove(index)} className=“text-zinc-600 hover:text-red-400 transition-colors”>
+<button onClick={() => onRemove(index)} className="text-zinc-600 hover:text-red-400 transition-colors">
 <Trash2 className="w-4 h-4" />
 </button>
 </div>
 <div className="grid grid-cols-3 gap-3">
 <FormField label="ID" required>
-<Input value={integration.id || “”} onChange={(e) => handleChange(“id”, e.target.value)}
-placeholder=“int_github” className=“bg-zinc-950 border-zinc-700 text-white font-mono text-sm” />
+<Input value={integration.id || ""} onChange={(e) => handleChange("id", e.target.value)}
+placeholder="int_github" className="bg-zinc-950 border-zinc-700 text-white font-mono text-sm" />
 </FormField>
 <FormField label="Name" required>
-<Input value={integration.name || “”} onChange={(e) => handleChange(“name”, e.target.value)}
-placeholder=“GitHub” className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={integration.name || ""} onChange={(e) => handleChange("name", e.target.value)}
+placeholder="GitHub" className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 <FormField label="Category" required>
-<Input value={integration.category || “”} onChange={(e) => handleChange(“category”, e.target.value)}
-placeholder=“version-control” className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={integration.category || ""} onChange={(e) => handleChange("category", e.target.value)}
+placeholder="version-control" className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 </div>
 <FormField label="Description">
-<Input value={integration.description || “”} onChange={(e) => handleChange(“description”, e.target.value)}
-placeholder=“What this integration enables” className=“bg-zinc-950 border-zinc-700 text-white” />
+<Input value={integration.description || ""} onChange={(e) => handleChange("description", e.target.value)}
+placeholder="What this integration enables" className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 <div className="flex items-center gap-3">
 <label className="flex items-center gap-2 cursor-pointer">
-<input type=“checkbox” checked={!!integration.required}
-onChange={(e) => handleChange(“required”, e.target.checked)}
-className=“accent-indigo-500” />
+<input type="checkbox" checked={!!integration.required}
+onChange={(e) => handleChange("required", e.target.checked)}
+className="accent-indigo-500" />
 <span className="text-sm text-zinc-300">Required integration</span>
 </label>
 </div>
@@ -393,19 +393,19 @@ className=“accent-indigo-500” />
 
 // ─── Color swatch input ─────────────────────────────────────────────────────
 const ColorArrayInput = ({ label, value = [], onChange, hint }) => {
-const rawValue = Array.isArray(value) ? value.join(”, “) : value;
+const rawValue = Array.isArray(value) ? value.join(", ") : value;
 return (
 <FormField label={label} hint={hint}>
 <div className="flex gap-2 items-center">
 <Input
 value={rawValue}
-onChange={(e) => onChange(e.target.value.split(”,”).map((c) => c.trim()).filter(Boolean))}
-placeholder=”#6366f1, #4f46e5”
-className=“bg-zinc-950 border-zinc-700 text-white font-mono text-sm”
+onChange={(e) => onChange(e.target.value.split(",").map((c) => c.trim()).filter(Boolean))}
+placeholder="#6366f1, #4f46e5"
+className="bg-zinc-950 border-zinc-700 text-white font-mono text-sm"
 />
 <div className="flex gap-1 flex-shrink-0">
 {(Array.isArray(value) ? value : []).slice(0, 4).map((c, i) => (
-<div key={i} style={{ background: c }} className=“w-6 h-6 rounded border border-zinc-700” title={c} />
+<div key={i} style={{ background: c }} className="w-6 h-6 rounded border border-zinc-700" title={c} />
 ))}
 </div>
 </div>
@@ -416,8 +416,8 @@ className=“bg-zinc-950 border-zinc-700 text-white font-mono text-sm”
 // ─── Main Builder Page ──────────────────────────────────────────────────────
 export const BuilderPage = ({ content, onContentChange }) => {
 const [pkml, setPkml] = useState(() => {
-try { return content ? JSON.parse(content) : { …DEFAULT_PKML }; }
-catch { return { …DEFAULT_PKML }; }
+try { return content ? JSON.parse(content) : { ...DEFAULT_PKML }; }
+catch { return { ...DEFAULT_PKML }; }
 });
 
 // Sync content → pkml state (when editor changes)
@@ -431,14 +431,14 @@ setPkml(parsed);
 }, [content]);
 
 const updatePkml = useCallback((updates) => {
-const newPkml = { …pkml, …updates };
-newPkml.meta = { …newPkml.meta, last_updated: new Date().toISOString() };
+const newPkml = { ...pkml, ...updates };
+newPkml.meta = { ...newPkml.meta, last_updated: new Date().toISOString() };
 setPkml(newPkml);
 onContentChange(JSON.stringify(newPkml, null, 2));
 }, [pkml, onContentChange]);
 
 const updateNested = (path, value) => {
-const parts = path.split(”.”);
+const parts = path.split(".");
 const newPkml = JSON.parse(JSON.stringify(pkml)); // deep clone
 let current = newPkml;
 for (let i = 0; i < parts.length - 1; i++) {
@@ -446,7 +446,7 @@ if (!current[parts[i]]) current[parts[i]] = {};
 current = current[parts[i]];
 }
 current[parts[parts.length - 1]] = value;
-newPkml.meta = { …newPkml.meta, last_updated: new Date().toISOString() };
+newPkml.meta = { ...newPkml.meta, last_updated: new Date().toISOString() };
 setPkml(newPkml);
 onContentChange(JSON.stringify(newPkml, null, 2));
 };
@@ -454,40 +454,40 @@ onContentChange(JSON.stringify(newPkml, null, 2));
 // ── Features ──────────────────────────────────────────────────────────────
 const addFeature = () => {
 const features = pkml.features || [];
-updatePkml({ features: […features, { id: `feat_${features.length + 1}`, name: “”, description: “”, user_benefit: “”, priority: “p1”, status: “planned” }] });
+updatePkml({ features: [...features, { id: `feat_${features.length + 1}`, name: "", description: "", user_benefit: "", priority: "p1", status: "planned" }] });
 };
-const updateFeature = (i, f) => { const a = […(pkml.features || [])]; a[i] = f; updatePkml({ features: a }); };
-const removeFeature = (i) => { const a = […(pkml.features || [])]; a.splice(i, 1); updatePkml({ features: a }); toast.success(“Feature removed”); };
+const updateFeature = (i, f) => { const a = [...(pkml.features || [])]; a[i] = f; updatePkml({ features: a }); };
+const removeFeature = (i) => { const a = [...(pkml.features || [])]; a.splice(i, 1); updatePkml({ features: a }); toast.success("Feature removed"); };
 
 // ── Workflows ─────────────────────────────────────────────────────────────
 const addWorkflow = () => {
 const workflows = pkml.workflows || [];
-updatePkml({ workflows: […workflows, { id: `workflow_${workflows.length + 1}`, name: “”, description: “”, difficulty: “beginner”, steps: [], outcome: “” }] });
+updatePkml({ workflows: [...workflows, { id: `workflow_${workflows.length + 1}`, name: "", description: "", difficulty: "beginner", steps: [], outcome: "" }] });
 };
-const updateWorkflow = (i, w) => { const a = […(pkml.workflows || [])]; a[i] = w; updatePkml({ workflows: a }); };
-const removeWorkflow = (i) => { const a = […(pkml.workflows || [])]; a.splice(i, 1); updatePkml({ workflows: a }); toast.success(“Workflow removed”); };
+const updateWorkflow = (i, w) => { const a = [...(pkml.workflows || [])]; a[i] = w; updatePkml({ workflows: a }); };
+const removeWorkflow = (i) => { const a = [...(pkml.workflows || [])]; a.splice(i, 1); updatePkml({ workflows: a }); toast.success("Workflow removed"); };
 
 // ── Integrations ──────────────────────────────────────────────────────────
 const addIntegration = () => {
 const integrations = pkml.integrations || [];
-updatePkml({ integrations: […integrations, { id: “”, name: “”, category: “”, description: “”, required: false }] });
+updatePkml({ integrations: [...integrations, { id: "", name: "", category: "", description: "", required: false }] });
 };
-const updateIntegration = (i, v) => { const a = […(pkml.integrations || [])]; a[i] = v; updatePkml({ integrations: a }); };
-const removeIntegration = (i) => { const a = […(pkml.integrations || [])]; a.splice(i, 1); updatePkml({ integrations: a }); toast.success(“Integration removed”); };
+const updateIntegration = (i, v) => { const a = [...(pkml.integrations || [])]; a[i] = v; updatePkml({ integrations: a }); };
+const removeIntegration = (i) => { const a = [...(pkml.integrations || [])]; a.splice(i, 1); updatePkml({ integrations: a }); toast.success("Integration removed"); };
 
 const handleSave = () => {
 onContentChange(JSON.stringify(pkml, null, 2));
-toast.success(“Changes saved to editor!”);
+toast.success("Changes saved to editor!");
 };
 
 const completenessHints = [];
-if (!pkml.product?.positioning?.problem) completenessHints.push(“Add problem statement”);
-if (!pkml.features?.length) completenessHints.push(“Add at least one feature”);
-if (!pkml.workflows?.length) completenessHints.push(“Add a workflow”);
+if (!pkml.product?.positioning?.problem) completenessHints.push("Add problem statement");
+if (!pkml.features?.length) completenessHints.push("Add at least one feature");
+if (!pkml.workflows?.length) completenessHints.push("Add a workflow");
 const hasTechStack = Array.isArray(pkml.tech_stack)
 ? pkml.tech_stack.length > 0
 : (pkml.tech_stack?.frontend?.length || pkml.tech_stack?.backend?.length);
-if (!hasTechStack) completenessHints.push(“Add tech stack”);
+if (!hasTechStack) completenessHints.push("Add tech stack");
 
 return (
 <div className="h-[calc(100vh-4rem)] flex flex-col" data-testid="builder-page">
