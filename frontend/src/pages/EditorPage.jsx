@@ -64,7 +64,6 @@ return (
 </div>
 </div>
 
-```
   <ScrollArea className="flex-1">
     <div className="p-4 space-y-6">
       {/* Status */}
@@ -179,7 +178,6 @@ return (
     </div>
   </ScrollArea>
 </div>
-```
 
 );
 };
@@ -196,7 +194,6 @@ toast.error("Please enter README content");
 return;
 }
 
-```
 setIsImporting(true);
 try {
   const response = await fetch(`${BACKEND_URL}/api/pkml/parse-readme`, {
@@ -222,7 +219,6 @@ try {
 } finally {
   setIsImporting(false);
 }
-```
 
 };
 
@@ -457,7 +453,7 @@ setValidation(null);
 return;
 }
 
-```
+
 setIsValidating(true);
 try {
   const response = await fetch(`${BACKEND_URL}/api/pkml/validate`, {
@@ -492,7 +488,6 @@ try {
 } finally {
   setIsValidating(false);
 }
-```
 
 }, []);
 
@@ -502,7 +497,7 @@ if (validationTimeoutRef.current) {
 clearTimeout(validationTimeoutRef.current);
 }
 
-```
+
 validationTimeoutRef.current = setTimeout(() => {
   validateContent(content);
 }, 500);
@@ -512,7 +507,7 @@ return () => {
     clearTimeout(validationTimeoutRef.current);
   }
 };
-```
+
 
 }, [content, validateContent]);
 
@@ -528,7 +523,6 @@ toast.error("No content to download");
 return;
 }
 
-```
 try {
   // Validate JSON before download
   const parsed = JSON.parse(content);
@@ -545,7 +539,6 @@ try {
 } catch (error) {
   toast.error("Invalid JSON - fix errors before downloading");
 }
-```
 
 };
 
@@ -556,7 +549,7 @@ toast.error("No content to export");
 return;
 }
 
-```
+
 try {
   const response = await fetch(`${BACKEND_URL}/api/pkml/export-markdown`, {
     method: "POST",
@@ -581,7 +574,6 @@ try {
   toast.error("Failed to export Markdown");
   console.error(error);
 }
-```
 
 };
 
@@ -629,7 +621,6 @@ return (
 <GenerateExampleDialog onGenerate={onContentChange} />
 </div>
 
-```
     <div className="flex-1" />
 
     <div className="flex items-center gap-2">
@@ -717,7 +708,6 @@ return (
     <span>PKML v0.1.0</span>
   </div>
 </div>
-```
 
 );
 };
