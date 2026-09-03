@@ -64,7 +64,6 @@ data-testid={`registry-card-${doc.slug}`}
 <span className="text-[10px] text-zinc-600 whitespace-nowrap flex-shrink-0">{timeAgo(doc.updated_at)}</span>
 </div>
 
-```
     <div className="flex flex-wrap gap-1 mb-3">
       {cats.slice(0, 3).map((c) => <CategoryPill key={c} cat={c} />)}
     </div>
@@ -101,7 +100,6 @@ data-testid={`registry-card-${doc.slug}`}
     </button>
   </div>
 </div>
-```
 
 );
 };
@@ -179,7 +177,7 @@ return (
 Discover, fork, and publish structured product knowledge. {total > 0 && <span className="text-zinc-500">{total} {total === 1 ? "entry" : "entries"} published.</span>}
 </p>
 
-```
+
       {/* Search */}
       <form onSubmit={handleSearch} className="flex gap-2 mt-4">
         <div className="relative flex-1">
@@ -244,7 +242,6 @@ Discover, fork, and publish structured product knowledge. {total > 0 && <span cl
     </div>
   </ScrollArea>
 </div>
-```
 
 );
 };
