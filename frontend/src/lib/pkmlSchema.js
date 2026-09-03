@@ -1,18 +1,18 @@
 // PKML JSON Schema v0.2 for Monaco Editor validation
 
 export const PKML_SCHEMA = {
-“$schema”: “http://json-schema.org/draft-07/schema#”,
-“$id”: “https://pkml.dev/schema/v0.2.json”,
-“title”: “Product Knowledge Markup Language (PKML)”,
-“description”: “A schema for capturing product and engineering knowledge in a machine-readable, LLM-optimized format”,
-“type”: “object”,
-“required”: [”$schema”, “meta”, “product”],
-“additionalProperties”: true,
-“properties”: {
-“$schema”: {
-“type”: “string”,
-“const”: “https://pkml.dev/schema/v0.2.json”,
-“description”: “PKML schema version identifier”
+"$schema": "http://json-schema.org/draft-07/schema#",
+"$id": "https://pkml.dev/schema/v0.2.json",
+"title": "Product Knowledge Markup Language (PKML)",
+"description": "A schema for capturing product and engineering knowledge in a machine-readable, LLM-optimized format",
+"type": "object",
+"required": ["$schema", "meta", "product"],
+"additionalProperties": true,
+"properties": {
+"$schema": {
+"type": "string",
+"const": "https://pkml.dev/schema/v0.2.json",
+"description": "PKML schema version identifier"
 },
 
 ```
@@ -553,37 +553,37 @@ export const PKML_SCHEMA = {
 
 // Default minimal PKML v0.2 template
 export const DEFAULT_PKML = {
-“$schema”: “https://pkml.dev/schema/v0.2.json”,
-“meta”: {
-“version”: “1.0.0”,
-“pkml_version”: “0.2”,
-“last_updated”: new Date().toISOString()
+"$schema": "https://pkml.dev/schema/v0.2.json",
+"meta": {
+"version": "1.0.0",
+"pkml_version": "0.2",
+"last_updated": new Date().toISOString()
 },
-“product”: {
-“name”: “Your Product Name”,
-“tagline”: “Your product tagline here”,
-“category”: [“productivity”]
+"product": {
+"name": "Your Product Name",
+"tagline": "Your product tagline here",
+"category": ["productivity"]
 }
 };
 
 // Monaco editor options
 export const MONACO_OPTIONS = {
-theme: ‘vs-dark’,
-language: ‘json’,
+theme: 'vs-dark',
+language: 'json',
 automaticLayout: true,
 minimap: { enabled: false },
 fontSize: 14,
-fontFamily: “‘JetBrains Mono’, monospace”,
-lineNumbers: ‘on’,
+fontFamily: "'JetBrains Mono', monospace",
+lineNumbers: 'on',
 scrollBeyondLastLine: false,
 roundedSelection: true,
 padding: { top: 16, bottom: 16 },
-renderLineHighlight: ‘all’,
-cursorBlinking: ‘smooth’,
-cursorSmoothCaretAnimation: ‘on’,
+renderLineHighlight: 'all',
+cursorBlinking: 'smooth',
+cursorSmoothCaretAnimation: 'on',
 smoothScrolling: true,
 tabSize: 2,
-wordWrap: ‘on’,
+wordWrap: 'on',
 formatOnPaste: true,
 formatOnType: true,
 bracketPairColorization: { enabled: true },
@@ -596,35 +596,35 @@ monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
 validate: true,
 schemas: [
 {
-uri: ‘https://pkml.dev/schema/v0.2.json’,
-fileMatch: [’*’],
+uri: 'https://pkml.dev/schema/v0.2.json',
+fileMatch: ['*'],
 schema: PKML_SCHEMA
 }
 ],
 enableSchemaRequest: false
 });
 
-monaco.editor.defineTheme(‘pkml-dark’, {
-base: ‘vs-dark’,
+monaco.editor.defineTheme('pkml-dark', {
+base: 'vs-dark',
 inherit: true,
 rules: [
-{ token: ‘string.key.json’, foreground: ‘6366f1’ },
-{ token: ‘string.value.json’, foreground: ‘22c55e’ },
-{ token: ‘number’, foreground: ‘eab308’ },
-{ token: ‘keyword’, foreground: ‘8b5cf6’ },
-{ token: ‘comment’, foreground: ‘6b7280’ }
+{ token: 'string.key.json', foreground: '6366f1' },
+{ token: 'string.value.json', foreground: '22c55e' },
+{ token: 'number', foreground: 'eab308' },
+{ token: 'keyword', foreground: '8b5cf6' },
+{ token: 'comment', foreground: '6b7280' }
 ],
 colors: {
-‘editor.background’: ‘#09090b’,
-‘editor.foreground’: ‘#fafafa’,
-‘editor.lineHighlightBackground’: ‘#18181b’,
-‘editor.selectionBackground’: ‘#6366f140’,
-‘editorCursor.foreground’: ‘#6366f1’,
-‘editorLineNumber.foreground’: ‘#52525b’,
-‘editorLineNumber.activeForeground’: ‘#a1a1aa’,
-‘editor.inactiveSelectionBackground’: ‘#27272a’,
-‘editorIndentGuide.background’: ‘#27272a’,
-‘editorIndentGuide.activeBackground’: ‘#3f3f46’
+'editor.background': '#09090b',
+'editor.foreground': '#fafafa',
+'editor.lineHighlightBackground': '#18181b',
+'editor.selectionBackground': '#6366f140',
+'editorCursor.foreground': '#6366f1',
+'editorLineNumber.foreground': '#52525b',
+'editorLineNumber.activeForeground': '#a1a1aa',
+'editor.inactiveSelectionBackground': '#27272a',
+'editorIndentGuide.background': '#27272a',
+'editorIndentGuide.activeBackground': '#3f3f46'
 }
 });
 };
