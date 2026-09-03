@@ -313,7 +313,6 @@ placeholder="User has successfully created and assigned a task"
 className="bg-zinc-950 border-zinc-700 text-white" />
 </FormField>
 
-```
         {/* Steps */}
         <div className="pt-2">
           <div className="flex items-center justify-between mb-2">
@@ -344,7 +343,6 @@ className="bg-zinc-950 border-zinc-700 text-white" />
     </CollapsibleContent>
   </div>
 </Collapsible>
-```
 
 );
 };
@@ -508,8 +506,6 @@ return (
 <Save className="w-4 h-4" /> Save to Editor
 </Button>
 </div>
-
-```
   {/* Form Content */}
   <ScrollArea className="flex-1">
     <div className="max-w-3xl mx-auto p-6 space-y-4">
@@ -924,7 +920,6 @@ return (
     </div>
   </ScrollArea>
 </div>
-```
 
 );
 };
