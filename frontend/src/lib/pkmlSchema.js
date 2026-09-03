@@ -15,7 +15,6 @@ export const PKML_SCHEMA = {
 "description": "PKML schema version identifier"
 },
 
-```
 "meta": {
   "type": "object",
   "required": ["version", "pkml_version", "last_updated"],
@@ -546,7 +545,6 @@ export const PKML_SCHEMA = {
     }
   }
 }
-```
 
 }
 };
