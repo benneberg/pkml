@@ -164,7 +164,6 @@ className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
 </div>
 </div>
 
-```
   <ScrollArea className="flex-1">
     <div className="max-w-3xl mx-auto p-6 space-y-5">
       {showRaw ? (
@@ -442,7 +441,6 @@ className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium
     </div>
   </ScrollArea>
 </div>
-```
 
 );
 };
