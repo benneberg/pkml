@@ -1,6 +1,6 @@
 # PKML — Product Knowledge Markup Language
 
-> **A structured, machine-readable format for capturing what your product is, what it does, and how it’s built.**
+> **A structured, machine-readable format for capturing what your product is, what it does, and how it's built.**
 
 
 
@@ -11,7 +11,7 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-47A248.svg)](https://www.mongodb.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-PKML v0.2 is an open standard and web platform for creating, editing, and sharing product knowledge files. A `pkml.json` gives AI tools, documentation systems, and developers a precise, structured understanding of your product — including the engineering team’s accumulated knowledge that never makes it into code comments.
+PKML v0.2 is an open standard and web platform for creating, editing, and sharing product knowledge files. A `pkml.json` gives AI tools, documentation systems, and developers a precise, structured understanding of your product — including the engineering team's accumulated knowledge that never makes it into code comments.
 
 -----
 
@@ -30,7 +30,7 @@ engineering section  How to BUILD it
                      decision log, glossary, coordination rules
 ```
 
-This is the missing layer between “here’s the code” and “here’s what we’re building and why.”
+This is the missing layer between "here's the code" and "here's what we're building and why."
 
 -----
 
@@ -46,7 +46,7 @@ Monaco-based JSON editor with live v0.2 schema validation. Shows errors, warning
 
 - **New** — start a fresh PKML document
 - **Import README** — paste any README.md, AI generates a PKML draft (Claude when `ANTHROPIC_API_KEY` is set, regex fallback otherwise)
-- **Import File** — drag-and-drop or browse for an existing `pkml.json`. Don’t have one? [Generate it from your codebase with CCC →](https://github.com/benneberg/contextcompiler)
+- **Import File** — drag-and-drop or browse for an existing `pkml.json`. Don't have one? [Generate it from your codebase with CCC →](https://github.com/benneberg/contextcompiler)
 - **Generate Example** — load a template from the gallery
 - **Format** — auto-format JSON
 - **Export MD** — export to human-readable Markdown (includes the engineering section)
@@ -232,7 +232,7 @@ PKML and [CCC (Code Context Compiler)](https://github.com/benneberg/contextcompi
 |**Runs as**  |Web platform             |Python CLI                 |
 |**Audience** |Developers, PMs, founders|Developers, AI coding tools|
 
-**Together:** CCC answers *“how is this built?”* — PKML answers *“what does this do and why?”*. An LLM with both can understand a product completely — the technical facts and the institutional knowledge.
+**Together:** CCC answers *"how is this built?"* — PKML answers *"what does this do and why?"*. An LLM with both can understand a product completely — the technical facts and the institutional knowledge.
 
 **Workflow:**
 
